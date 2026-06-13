@@ -1,123 +1,137 @@
-</html><!DOCTYPE html>
-
+<<!DOCTYPE html>
 <html>
-
 <head>
 <title>NFE Sandbox</title>
 
 <style>
-
 body{
-background:#0f172a;
-color:white;
-font-family:Arial;
-max-width:1000px;
-margin:auto;
-padding:20px;
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
 }
 
 textarea{
-width:100%;
-height:150px;
-background:#1e293b;
-color:white;
-border:none;
-padding:10px;
-border-radius:8px;
+  width:100%;
+  height:150px;
+  background:#1e293b;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:8px;
 }
 
 button{
-margin-top:10px;
-padding:12px 20px;
-background:#22c55e;
-border:none;
-border-radius:8px;
-cursor:pointer;
+  margin-top:15px;
+  padding:12px 20px;
+  background:#22c55e;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
 }
 
 .card{
-background:#1e293b;
-padding:15px;
-margin-top:15px;
-border-radius:8px;
+  background:#1e293b;
+  padding:15px;
+  margin-top:15px;
+  border-radius:8px;
 }
 
 h2{
-color:#39D0C5;
+  color:#39D0C5;
 }
 
+label{
+  display:block;
+  margin:5px 0;
+}
 </style>
-
 </head>
 
 <body>
 
 <h1>Narrative Fuel Engine Sandbox</h1>
 
-<textarea id="input"
-placeholder="Describe a situation..."></textarea>
+<textarea id="input" placeholder="Describe a situation..."></textarea>
 
-<br><br>
-
+<div class="card">
 <h3>Fuel Type</h3>
+<label><input type="checkbox" value="Identity"> Identity</label>
+<label><input type="checkbox" value="Incentive"> Incentive</label>
+<label><input type="checkbox" value="Territory"> Territory</label>
+<label><input type="checkbox" value="Expectation"> Expectation</label>
+<label><input type="checkbox" value="Contradiction"> Contradiction</label>
+<label><input type="checkbox" value="Fear"> Fear</label>
+</div>
 
-<label><input type="checkbox"> Identity</label><br> <label><input type="checkbox"> Incentive</label><br> <label><input type="checkbox"> Territory</label><br> <label><input type="checkbox"> Expectation</label><br> <label><input type="checkbox"> Contradiction</label><br> <label><input type="checkbox"> Fear</label><br><br>
+<div class="card">
+<h3>Classification</h3>
+<label><input name="classification" type="radio" value="Interesting Observation"> Interesting Observation</label>
+<label><input name="classification" type="radio" value="Candidate Discovery"> Candidate Discovery</label>
+<label><input name="classification" type="radio" value="Requires Testing"> Requires Testing</label>
+<label><input name="classification" type="radio" value="Likely Existing Explanation"> Likely Existing Explanation</label>
+<label><input name="classification" type="radio" value="Likely NFE Drift"> Likely NFE Drift</label>
+<label><input name="classification" type="radio" value="Not Significant"> Not Significant</label>
+</div>
 
-<button onclick="analyze()">
-Run Analysis
-</button>
-
-
-Run Analysis
-</button>
+<button onclick="analyze()">Run Analysis</button>
 
 <div id="results"></div>
 
 <script>
-
 function analyze(){
 
-const text =
-document.getElementById("input").value;
+  const text = document.getElementById("input").value;
 
-document.getElementById("results").innerHTML = `
+  const fuels = Array.from(
+    document.querySelectorAll('input[type="checkbox"]:checked')
+  ).map(box => box.value);
 
-<div class="card">
-<h2>Reality</h2>
-${text}
-</div>
+  const classification =
+    document.querySelector('input[name="classification"]:checked');
 
-<div class="card">
-<h2>Fuel</h2>
-Assumptions, expectations, incentives, identities.
-</div>
+  document.getElementById("results").innerHTML = `
 
-<div class="card">
-<h2>Interpretations</h2>
-Multiple narrative engines may explain this situation.
-</div>
+    <div class="card">
+      <h2>Reality</h2>
+      <p>${text || "No situation entered yet."}</p>
+    </div>
 
-<div class="card">
-<h2>Collision</h2>
-Potential conflict between competing interpretations.
-</div>
+    <div class="card">
+      <h2>Fuel Detected</h2>
+      <p>${fuels.length ? fuels.join(", ") : "No fuel selected."}</p>
+    </div>
 
-<div class="card">
-<h2>Pressure</h2>
-What forces are increasing tension?
-</div>
+    <div class="card">
+      <h2>Interpretations</h2>
+      <p>Multiple narrative engines may explain this situation.</p>
+    </div>
 
-<div class="card">
-<h2>Alpha Recommendation</h2>
-Gather more evidence before promoting any explanation.
-</div>
+    <div class="card">
+      <h2>Collision</h2>
+      <p>Potential conflict between competing interpretations.</p>
+    </div>
 
-`;
+    <div class="card">
+      <h2>Pressure</h2>
+      <p>What forces are increasing tension?</p>
+    </div>
 
+    <div class="card">
+      <h2>Classification</h2>
+      <p>${classification ? classification.value : "No classification selected."}</p>
+    </div>
+
+    <div class="card">
+      <h2>Alpha Recommendation</h2>
+      <p>Gather more evidence before promoting any explanation.</p>
+    </div>
+
+  `;
 }
-
 </script>
 
 </body>
-
 </html>
