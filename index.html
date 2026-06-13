@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <title>NFE Sandbox</title>
@@ -58,12 +58,12 @@ label{
 
 <div class="card">
 <h3>Fuel Type</h3>
-<input type="checkbox" name="fuel" value="Identity"> Identity
-<input type="checkbox" name="fuel" value="Incentive"> Incentive
-<input type="checkbox" name="fuel" value="Territory"> Territory
-<input type="checkbox" name="fuel" value="Expectation"> Expectation
-<input type="checkbox" name="fuel" value="Contradiction"> Contradiction
-<input type="checkbox" name="fuel" value="Fear"> Fear
+<label><input type="checkbox" name="fuel" value="Identity"> Identity</label>
+<label><input type="checkbox" name="fuel" value="Incentive"> Incentive</label>
+<label><input type="checkbox" name="fuel" value="Territory"> Territory</label>
+<label><input type="checkbox" name="fuel" value="Expectation"> Expectation</label>
+<label><input type="checkbox" name="fuel" value="Contradiction"> Contradiction</label>
+<label><input type="checkbox" name="fuel" value="Fear"> Fear</label>
 </div>
 
 <div class="card">
@@ -81,69 +81,105 @@ label{
 <div id="results"></div>
 
 <script>
-function analyze(){
-
-  const text = document.getElementById("input").value;
-
-  const fuels = Array.from(
-    document.querySelectorAll('input[type="checkbox"]:checked')
-  ).map(box => box.value);
-
-  const classification =
-    document.querySelector('input[name="classification"]:checked');
-
-  document.getElementById("results").innerHTML = `
-
-    <div class="card">
-      <h2>Reality</h2>
-      <p>${text || "No situation entered yet."}</p>
-    </div>
-
-    <div class="card">
-      <h2>Fuel Detected</h2>
-      <p>${fuels.length ? fuels.join(", ") : "No fuel selected."}</p>
-    </div>
-
-    <div class="card">
-      <h2>Interpretations</h2>
-      <p>Multiple narrative engines may explain this situation.</p>
-    </div>
-
-    <div class="card">
-      <h2>Collision</h2>
-      <p>Potential conflict between competing interpretations.</p>
-    </div>
-
-    <div class="card">
-      <h2>Pressure</h2>
-      <p>What forces are increasing tension?</p>
-    </div>
-
-    <div class="card">
-      <h2>Classification</h2>
-      <p>${classification ? classification.value : "No classification selected."}</p>
-    </div>
-
-    <div class="card">
-      <h2>Alpha Recommendation</h2>
-      <p>Gather more evidence before promoting any explanation.</p>
-    </div>
-
-  `;
-}
-</script>
-<script>
 function getChecked(name){
   return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
     .map(item => item.value);
 }
 
+function buildInterpretation(text, fuels){
+  if(!text){
+    return "No situation entered. The engine needs reality before it can interpret fuel.";
+  }
+
+  if(fuels.includes("Identity")){
+    return "NFE sees an identity engine forming. The situation is not only about events; it is about what the subject believes they are, what role they are protecting, or how they want to be seen.";
+  }
+
+  if(fuels.includes("Territory")){
+    return "NFE sees a territory engine forming. The pressure may come from ownership, control, boundaries, status, or who gets to define the space.";
+  }
+
+  if(fuels.includes("Contradiction")){
+    return "NFE sees contradiction fuel. Two explanations may both feel true, but they cannot comfortably occupy the same reality without creating pressure.";
+  }
+
+  if(fuels.includes("Fear")){
+    return "NFE sees fear fuel. The visible story may be covering a deeper threat, loss, exposure, rejection, or collapse.";
+  }
+
+  if(fuels.includes("Incentive")){
+    return "NFE sees incentive fuel. The story may be shaped by rewards, survival, approval, money, attention, or avoiding punishment.";
+  }
+
+  if(fuels.includes("Expectation")){
+    return "NFE sees expectation fuel. The pressure may come from what someone thought should happen versus what reality is actually doing.";
+  }
+
+  return "NFE detects a basic narrative engine, but no specific fuel was selected. Select fuel to sharpen the analysis.";
+}
+
+function buildCollision(fuels){
+  if(fuels.length > 1){
+    return "Collision detected between " + fuels.join(" and ") + ". This means the situation may not have one clean explanation. Multiple engines may be competing to control the meaning.";
+  }
+
+  if(fuels.length === 1){
+    return "Single-fuel situation detected. Collision may be low for now, but pressure can increase if another fuel enters the system.";
+  }
+
+  return "No collision detected yet because no fuel was selected.";
+}
+
+function buildPressure(fuels){
+  if(fuels.includes("Identity") && fuels.includes("Fear")){
+    return "Pressure rises because the subject may feel that their identity is under threat.";
+  }
+
+  if(fuels.includes("Territory") && fuels.includes("Incentive")){
+    return "Pressure rises because control of the territory may affect reward, status, or survival.";
+  }
+
+  if(fuels.includes("Expectation") && fuels.includes("Contradiction")){
+    return "Pressure rises because reality is violating the expected story.";
+  }
+
+  if(fuels.length){
+    return "Pressure exists because the selected fuel gives the situation emotional or strategic weight.";
+  }
+
+  return "Pressure cannot be estimated without fuel.";
+}
+
+function buildRecommendation(classification, fuels){
+  if(classification === "Candidate Discovery"){
+    return "Alpha recommendation: save this result, rerun it through another sandbox, and compare convergence before promotion.";
+  }
+
+  if(classification === "Requires Testing"){
+    return "Alpha recommendation: design a repeatable test. Do not promote this yet.";
+  }
+
+  if(classification === "Likely NFE Drift"){
+    return "Alpha recommendation: quarantine this result. Check whether the engine is forcing NFE language onto a weak case.";
+  }
+
+  if(classification === "Likely Existing Explanation"){
+    return "Alpha recommendation: compare this against normal psychology, sociology, incentives, or storytelling before calling it NFE-specific.";
+  }
+
+  if(classification === "Not Significant"){
+    return "Alpha recommendation: record lightly or discard. No promotion.";
+  }
+
+  return "Alpha recommendation: keep as an observation. Useful, but not promoted.";
+}
+
 function analyze(){
 
   const text = document.getElementById("input").value;
-
   const fuels = getChecked("fuel");
-  const classification = getChecked("classification");
+  const classificationList = getChecked("classification");
+  const classification = classificationList.length ? classificationList[0] : "No classification selected";
 
   document.getElementById("results").innerHTML = `
 
@@ -158,18 +194,38 @@ function analyze(){
   </div>
 
   <div class="card">
+    <h2>Interpretation</h2>
+    <p>${buildInterpretation(text, fuels)}</p>
+  </div>
+
+  <div class="card">
+    <h2>Collision</h2>
+    <p>${buildCollision(fuels)}</p>
+  </div>
+
+  <div class="card">
+    <h2>Pressure</h2>
+    <p>${buildPressure(fuels)}</p>
+  </div>
+
+  <div class="card">
     <h2>Classification</h2>
-    <p>${classification.length ? classification.join(", ") : "No classification selected."}</p>
+    <p>${classification}</p>
+  </div>
+
+  <div class="card">
+    <h2>Alpha Recommendation</h2>
+    <p>${buildRecommendation(classification, fuels)}</p>
   </div>
 
   <div class="card">
     <h2>Engine Status</h2>
-    <p>NFE has captured the situation, fuel type, and classification. Ignition confirmed.</p>
+    <p>NFE ignition confirmed. This version is now generating rule-based analysis instead of only echoing inputs.</p>
   </div>
 
   `;
-
 }
 </script>
+
 </body>
 </html>
