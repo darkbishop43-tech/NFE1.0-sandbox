@@ -132,6 +132,44 @@ function analyze(){
   `;
 }
 </script>
+<script>
+function getChecked(name){
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+    .map(item => item.value);
+}
 
+function analyze(){
+
+  const text = document.getElementById("input").value;
+
+  const fuels = getChecked("fuel");
+  const classification = getChecked("classification");
+
+  document.getElementById("results").innerHTML = `
+
+  <div class="card">
+    <h2>Reality</h2>
+    <p>${text || "No situation entered."}</p>
+  </div>
+
+  <div class="card">
+    <h2>Fuel Selected</h2>
+    <p>${fuels.length ? fuels.join(", ") : "No fuel selected."}</p>
+  </div>
+
+  <div class="card">
+    <h2>Classification</h2>
+    <p>${classification.length ? classification.join(", ") : "No classification selected."}</p>
+  </div>
+
+  <div class="card">
+    <h2>Engine Status</h2>
+    <p>NFE has captured the situation, fuel type, and classification. Ignition confirmed.</p>
+  </div>
+
+  `;
+
+}
+</script>
 </body>
 </html>
