@@ -184,33 +184,78 @@
       return;
     }
 
-    const fuelText = checked.join(", ");
+    const lowerInput = input.toLowerCase();
+
+    const fuelEvidence = {
+      Grievance: ["angry", "wronged", "betrayed", "unfair", "humiliated", "ignored", "resent", "accused"],
+      Desire: ["wants", "needs", "hopes", "dreams", "tries", "seeks", "goal", "wish"],
+      Fear: ["afraid", "scared", "threat", "danger", "risk", "panic", "worry", "lose"],
+      Identity: ["pride", "respect", "dignity", "who i am", "belief", "values", "honor", "status"],
+      Stake: ["money", "job", "cost", "loss", "gain", "deal", "power", "future"],
+      Contradiction: ["but", "however", "although", "yet", "conflict", "opposite", "contradiction"],
+      Expectation: ["supposed", "expected", "should", "promise", "plan", "normal", "routine"],
+      Territory: ["space", "home", "land", "control", "ownership", "boundary", "position", "place"]
+    };
+
+    const supported = [];
+    const unsupported = [];
+
+    checked.forEach(fuel => {
+      const keywords = fuelEvidence[fuel] || [];
+      const hasEvidence = keywords.some(word => lowerInput.includes(word.toLowerCase()));
+
+      if (hasEvidence) {
+        supported.push(fuel);
+      } else {
+        unsupported.push(fuel);
+      }
+    });
+
+    let classification = "Sandbox Test";
+
+    if (input.split(" ").length <= 7 && supported.length === 0) {
+      classification = "Low Fuel / Setup Phrase";
+    } else if (supported.length === 0) {
+      classification = "Unsupported Fuel Selection";
+    } else if (supported.length <= 2) {
+      classification = "Light Fuel Signal";
+    } else {
+      classification = "Active Fuel Signal";
+    }
 
     document.getElementById("results").style.display = "block";
 
     document.getElementById("realityOutput").innerText = input;
 
     document.getElementById("fuelOutput").innerText =
-      "Selected fuel: " + fuelText + ".";
+      "Selected fuel: " + checked.join(", ") +
+      "\n\nSupported by input: " + (supported.length ? supported.join(", ") : "None detected") +
+      "\nUnsupported / needs evidence: " + (unsupported.length ? unsupported.join(", ") : "None");
 
     document.getElementById("engineOutput").innerText =
-      "The engine reads this scenario as a situation where " + fuelText +
-      " may be shaping how the event is interpreted. The core question is: what does this input make important?";
+      "Classification: " + classification +
+      "\n\nThe engine should not treat every selected fuel as equally valid. NFE requires evidence from the input. If fuel is selected but not supported, it remains a hypothesis, not a finding.";
 
     document.getElementById("salienceOutput").innerText =
-      "Pressure test: identify which selected fuel becomes louder under stress. If one fuel starts crowding out the others, mark it as rising salience.";
+      supported.length
+        ? "Possible rising salience: " + supported.join(", ") + ". Pressure testing should focus only on supported fuels first."
+        : "No strong salience detected. The input may be too minimal or too neutral for a meaningful NFE read.";
 
     document.getElementById("collisionOutput").innerText =
-      "Collision test: look for competing interpretations of the same reality. If two engines explain the same event in incompatible ways, mark the collision zone.";
+      supported.includes("Contradiction")
+        ? "Possible collision detected. Look for two incompatible interpretations of the same reality."
+        : "No clear collision detected yet. More context is needed before naming competing engines.";
 
     document.getElementById("dominanceOutput").innerText =
-      "Dominance is not locked. This output is a test read only. Ask which interpretation is gaining ground, which is losing fuel, and what new reality would emerge if the dominant engine keeps winning.";
+      "Dominance is not locked. With weak or unsupported fuel evidence, no New Reality projection should be promoted.";
 
     document.getElementById("antiOutput").innerText =
-      "Anti-NFE check: this may not be a narrative problem. Structural, economic, technical, random, or material causes may explain the event better than fuel or engines.";
+      "Anti-NFE check: this may not be a narrative problem. The input may simply be a setup phrase, neutral event, joke premise, random statement, or incomplete data.";
 
     document.getElementById("statusOutput").innerText =
-      "TEST ONLY — not a locked discovery. Requires repeated testing, Anti-NFE review, and ledger tracking before promotion.";
+      classification === "Low Fuel / Setup Phrase"
+        ? "NOT SIGNIFICANT — Test Only. Input does not contain enough evidence for a full NFE analysis."
+        : "TEST ONLY — not a locked discovery. Requires repeated testing, Anti-NFE review, and ledger tracking before promotion.";
   }
 
   function clearAll() {
@@ -252,6 +297,7 @@ ${document.getElementById("statusOutput").innerText}
     alert("Results copied.");
   }
 </script>
+```
 
 </body>
 </html>
