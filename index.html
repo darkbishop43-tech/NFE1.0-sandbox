@@ -1,356 +1,256 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>NFE Sandbox</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFE Sandbox</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f2;
+      color: #222;
+    }
 
-<style>
-body{
-  background:#0f172a;
-  color:white;
-  font-family:Arial;
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
-}
+    header {
+      background: #111;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
 
-textarea{
-  width:100%;
-  height:140px;
-  background:#1e293b;
-  color:white;
-  border:none;
-  padding:12px;
-  border-radius:8px;
-  box-sizing:border-box;
-}
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
 
-button{
-  margin-top:15px;
-  padding:12px 20px;
-  background:#22c55e;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
-}
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
 
-.card{
-  background:#1e293b;
-  padding:15px;
-  margin-top:15px;
-  border-radius:8px;
-}
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
 
-h1{
-  color:white;
-}
+    .fuels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-h2, h3{
-  color:#39D0C5;
-}
+    label {
+      background: #eee;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-.option-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
+    button {
+      background: #111;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
 
-label{
-  display:inline-block;
-  margin:6px 10px 6px 0;
-}
+    button:hover {
+      background: #333;
+    }
 
-.result-box{
-  white-space:pre-wrap;
-  line-height:1.5;
-}
+    .result-section {
+      border-left: 4px solid #111;
+      padding-left: 12px;
+      margin-bottom: 15px;
+    }
 
-.small{
-  color:#94a3b8;
-  font-size:14px;
-}
-</style>
+    .small {
+      font-size: 14px;
+      color: #666;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: #f0f0f0;
+      padding: 12px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>Narrative Fuel Engine Sandbox</h1>
-<p class="small">Sandbox tool for testing prompts, stories, ideas, arguments, and nonsense without drifting the main chat. Outputs are experimental NFE-style sandbox readings, not final truth.</p>
+<header>
+  <h1>Narrative Fuel Engine Sandbox</h1>
+  <p>Test reality inputs, fuel selection, salience, pressure, collision, and Anti-NFE.</p>
+</header>
 
-<div class="card">
-<h3>Input</h3>
-<textarea id="input" placeholder="Example: Tell me a funny story about the pyramids..."></textarea>
-</div>
-
-<div class="card">
-<h3>Fuel Type</h3>
-<div class="option-row">
-<label><input type="checkbox" name="fuel" value="Identity"> Identity</label>
-<label><input type="checkbox" name="fuel" value="Incentive"> Incentive</label>
-<label><input type="checkbox" name="fuel" value="Territory"> Territory</label>
-<label><input type="checkbox" name="fuel" value="Expectation"> Expectation</label>
-<label><input type="checkbox" name="fuel" value="Contradiction"> Contradiction</label>
-<label><input type="checkbox" name="fuel" value="Fear"> Fear</label>
-</div>
-</div>
-
-<div class="card">
-<h3>Classification</h3>
-<div class="option-row">
-<label><input name="classification" type="radio" value="Interesting Observation"> Interesting Observation</label>
-<label><input name="classification" type="radio" value="Candidate Discovery"> Candidate Discovery</label>
-<label><input name="classification" type="radio" value="Requires Testing"> Requires Testing</label>
-<label><input name="classification" type="radio" value="Likely Existing Explanation"> Likely Existing Explanation</label>
-<label><input name="classification" type="radio" value="Likely NFE Drift"> Likely NFE Drift</label>
-<label><input name="classification" type="radio" value="Not Significant"> Not Significant</label>
-</div>
-</div>
-
-<div class="card">
-<h3>Sandbox Notes</h3>
-<textarea id="notes" placeholder="Paste Grok, Gemini, Claude, ChatGPT, or human test notes here..."></textarea>
-</div>
-
-<button onclick="analyze()">Run NFE Sandbox</button>
-<button onclick="copyResults()">Copy Results</button>
-<button onclick="clearForm()">Clear</button>
-
-<div id="results"></div>
-
-<script>
-function getChecked(name){
-  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
-    .map(item => item.value);
-}
-
-function clean(text){
-  return text.trim() || "No input entered.";
-}
-
-function detectMode(text){
-  const lower = text.toLowerCase();
-
-  if(lower.includes("story") || lower.includes("funny") || lower.includes("write") || lower.includes("tell me")){
-    return "Creative / Story Test";
-  }
-
-  if(lower.includes("disagree") || lower.includes("argument") || lower.includes("conflict") || lower.includes("debate")){
-    return "Conflict / Collision Test";
-  }
-
-  if(lower.includes("why") || lower.includes("explain") || lower.includes("analyze")){
-    return "Analysis Test";
-  }
-
-  return "Open Sandbox Test";
-}
-
-function generateInterpretation(text, fuels){
-  const fuelText = fuels.length ? fuels.join(", ") : "unspecified fuel";
-
-  return `NFE reads this as a prompt trying to create meaning from ${fuelText}. The sandbox should watch what the input makes important, what it ignores, and what kind of story pressure appears.`;
-}
-
-function generateCollision(text, fuels){
-  const lower = text.toLowerCase();
-
-  if(lower.includes("funny") || lower.includes("joke")){
-    return "Collision detected between seriousness and absurdity. The engine should create humor by treating something normal as important, or something important as ridiculous.";
-  }
-
-  if(lower.includes("pyramid") || lower.includes("pyramids")){
-    return "Collision detected between ancient mystery and everyday human nonsense. Strong comedy potential if the pyramids are treated like a workplace, neighborhood dispute, or badly managed construction project.";
-  }
-
-  if(lower.includes("dog") || lower.includes("sassy")){
-    return "Collision detected between human interpretation and animal interpretation. Strong Sassy-style potential if the audience sees what the animal understands but humans miss.";
-  }
-
-  if(fuels.includes("Identity")){
-    return "Collision likely centers on self-image, role, reputation, or who someone believes they are supposed to be.";
-  }
-
-  if(fuels.includes("Territory")){
-    return "Collision likely centers on control, boundaries, ownership, or who gets to define the space.";
-  }
-
-  return "Collision is not fully identified yet. Treat this as an open test and look for competing interpretations.";
-}
-
-function generateAnalysis(text, fuels, classification){
-  const mode = detectMode(text);
-
-  return `Mode: ${mode}
-
-The sandbox captured the input and tagged it for NFE-style review.
-
-Primary question:
-What does this prompt make important?
-
-Secondary question:
-What fuel is driving the response?
-
-Test value:
-${classification}
-
-Recommended use:
-Run the output, copy the result, and bring it back to Alpha only if it reveals drift, convergence, weird behavior, or a useful pattern.`;
-}
-
-function generateStory(text){
-  const lower = text.toLowerCase();
-
-  if(lower.includes("pyramid") || lower.includes("pyramids")){
-    return `The pyramids had stood for thousands of years, surviving sandstorms, empires, tourists, and one very confused man named Gary who insisted the largest pyramid "looked slightly crooked."
-
-The ancient stones said nothing.
-
-That was their policy.
-
-Gary walked around with a clipboard.
-
-"Who approved this angle?" he asked.
-
-A camel blinked at him with the tired expression of an animal that had seen civilizations rise and fall and still somehow had to deal with management.`;
-  }
-
-  if(lower.includes("dog") || lower.includes("sassy")){
-    return `The dog stared at the room like she had discovered a security breach.
-
-The humans called it "a missing sock."
-
-The dog called it evidence.
-
-She sniffed once, turned toward the couch, and gave the kind of bark normally reserved for emergencies, ghosts, and squirrels with political ambition.
-
-The humans laughed.
-
-The dog did not.
-
-History would remember who took the sock crisis seriously.`;
-  }
-
-  if(lower.includes("funny") || lower.includes("story")){
-    return `A very normal situation began making very abnormal decisions.
-
-At first, everyone tried to ignore it.
-
-Then the chair squeaked at exactly the wrong moment, someone took it personally, and the entire room silently agreed that reality had become unstable.
-
-Nobody knew what lesson they had learned.
-
-But everyone left slightly more suspicious of furniture.`;
-  }
-
-  return "No creative story pattern triggered. This input may be better suited for analysis, collision testing, or notes review.";
-}
-
-function generateAlphaRecommendation(text, fuels, classification){
-  return `Alpha Recommendation:
-
-Do not promote this result automatically.
-
-Use it as sandbox data only.
-
-Check for:
-1. Did the output match the selected fuel?
-2. Did the collision make sense?
-3. Did the engine drift into generic AI behavior?
-4. Did anything surprising appear that deserves another test?
-
-Status:
-${classification}`;
-}
-
-function analyze(){
-  const text = clean(document.getElementById("input").value);
-  const notes = clean(document.getElementById("notes").value);
-  const fuels = getChecked("fuel");
-  const classificationList = getChecked("classification");
-  const classification = classificationList.length ? classificationList[0] : "No classification selected";
-  const timestamp = new Date().toLocaleString();
-
-  const output = `
-  <div class="card">
-    <h2>Test Timestamp</h2>
-    <p>${timestamp}</p>
-  </div>
+<div class="container">
 
   <div class="card">
     <h2>Reality / Test Input</h2>
-    <div class="result-box">${text}</div>
+    <textarea id="realityInput" placeholder="Example: A small business owner publicly apologizes after customers accuse the company of betraying its values."></textarea>
+
+    <h3>Select Fuel</h3>
+    <div class="fuels">
+      <label><input type="checkbox" value="Grievance"> Grievance</label>
+      <label><input type="checkbox" value="Desire"> Desire</label>
+      <label><input type="checkbox" value="Fear"> Fear</label>
+      <label><input type="checkbox" value="Identity"> Identity</label>
+      <label><input type="checkbox" value="Stake"> Stake</label>
+      <label><input type="checkbox" value="Contradiction"> Contradiction</label>
+      <label><input type="checkbox" value="Expectation"> Expectation</label>
+      <label><input type="checkbox" value="Territory"> Territory</label>
+    </div>
+
+    <button onclick="runNFE()">Run NFE Test</button>
+    <button onclick="clearAll()">Clear</button>
   </div>
 
-  <div class="card">
-    <h2>Fuel Selected</h2>
-    <p>${fuels.length ? fuels.join(", ") : "No fuel selected."}</p>
+  <div class="card" id="results" style="display:none;">
+    <h2>NFE Analysis Output</h2>
+
+    <div class="result-section">
+      <h3>Reality</h3>
+      <p id="realityOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Fuel Inventory</h3>
+      <p id="fuelOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Engine Read</h3>
+      <p id="engineOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Salience / Pressure</h3>
+      <p id="salienceOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Collision</h3>
+      <p id="collisionOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Dominance / New Reality</h3>
+      <p id="dominanceOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Anti-NFE</h3>
+      <p id="antiOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Promotion Status</h3>
+      <p id="statusOutput"></p>
+    </div>
+
+    <button onclick="copyResults()">Copy Results</button>
   </div>
 
-  <div class="card">
-    <h2>Classification</h2>
-    <p>${classification}</p>
-  </div>
+</div>
 
-  <div class="card">
-    <h2>NFE Analysis Generator</h2>
-    <div class="result-box">${generateAnalysis(text, fuels, classification)}</div>
-  </div>
+<script>
+  function runNFE() {
+    const input = document.getElementById("realityInput").value.trim();
+    const checked = Array.from(document.querySelectorAll("input[type='checkbox']:checked"))
+      .map(box => box.value);
 
-  <div class="card">
-    <h2>Interpretation Generator</h2>
-    <div class="result-box">${generateInterpretation(text, fuels)}</div>
-  </div>
+    if (!input) {
+      alert("Add a reality / test input first.");
+      return;
+    }
 
-  <div class="card">
-    <h2>Collision Generator</h2>
-    <div class="result-box">${generateCollision(text, fuels)}</div>
-  </div>
+    if (checked.length === 0) {
+      alert("Select at least one fuel.");
+      return;
+    }
 
-  <div class="card">
-    <h2>Story Generator</h2>
-    <div class="result-box">${generateStory(text)}</div>
-  </div>
+    const fuelText = checked.join(", ");
 
-  <div class="card">
-    <h2>Alpha Engine Logic</h2>
-    <div class="result-box">${generateAlphaRecommendation(text, fuels, classification)}</div>
-  </div>
+    document.getElementById("results").style.display = "block";
 
-  <div class="card">
-    <h2>Sandbox Notes</h2>
-    <div class="result-box">${notes}</div>
-  </div>
+    document.getElementById("realityOutput").innerText = input;
 
-  <div class="card">
-    <h2>Drift Check</h2>
-    <p>This is a sandbox output. It is for testing, comparison, and review. It does not replace final NFE judgment.</p>
-  </div>
+    document.getElementById("fuelOutput").innerText =
+      "Selected fuel: " + fuelText + ".";
 
-  <div class="card">
-    <h2>Engine Status</h2>
-    <p>NFE Sandbox UI is working. Input, fuel, classification, notes, generators, and Alpha review were captured.</p>
-  </div>
-  `;
+    document.getElementById("engineOutput").innerText =
+      "The engine reads this scenario as a situation where " + fuelText +
+      " may be shaping how the event is interpreted. The core question is: what does this input make important?";
 
-  document.getElementById("results").innerHTML = output;
-}
+    document.getElementById("salienceOutput").innerText =
+      "Pressure test: identify which selected fuel becomes louder under stress. If one fuel starts crowding out the others, mark it as rising salience.";
 
-function copyResults(){
-  const results = document.getElementById("results").innerText;
-  if(!results){
-    alert("Run the sandbox first, then copy results.");
-    return;
+    document.getElementById("collisionOutput").innerText =
+      "Collision test: look for competing interpretations of the same reality. If two engines explain the same event in incompatible ways, mark the collision zone.";
+
+    document.getElementById("dominanceOutput").innerText =
+      "Dominance is not locked. This output is a test read only. Ask which interpretation is gaining ground, which is losing fuel, and what new reality would emerge if the dominant engine keeps winning.";
+
+    document.getElementById("antiOutput").innerText =
+      "Anti-NFE check: this may not be a narrative problem. Structural, economic, technical, random, or material causes may explain the event better than fuel or engines.";
+
+    document.getElementById("statusOutput").innerText =
+      "TEST ONLY — not a locked discovery. Requires repeated testing, Anti-NFE review, and ledger tracking before promotion.";
   }
-  navigator.clipboard.writeText(results);
-  alert("Results copied.");
-}
 
-function clearForm(){
-  document.getElementById("input").value = "";
-  document.getElementById("notes").value = "";
-  document.querySelectorAll("input").forEach(input => input.checked = false);
-  document.getElementById("results").innerHTML = "";
-}
+  function clearAll() {
+    document.getElementById("realityInput").value = "";
+    document.querySelectorAll("input[type='checkbox']").forEach(box => box.checked = false);
+    document.getElementById("results").style.display = "none";
+  }
+
+  function copyResults() {
+    const text = `
+NFE SANDBOX TEST
+
+Reality:
+${document.getElementById("realityOutput").innerText}
+
+Fuel Inventory:
+${document.getElementById("fuelOutput").innerText}
+
+Engine Read:
+${document.getElementById("engineOutput").innerText}
+
+Salience / Pressure:
+${document.getElementById("salienceOutput").innerText}
+
+Collision:
+${document.getElementById("collisionOutput").innerText}
+
+Dominance / New Reality:
+${document.getElementById("dominanceOutput").innerText}
+
+Anti-NFE:
+${document.getElementById("antiOutput").innerText}
+
+Promotion Status:
+${document.getElementById("statusOutput").innerText}
+    `;
+
+    navigator.clipboard.writeText(text);
+    alert("Results copied.");
+  }
 </script>
 
 </body>
