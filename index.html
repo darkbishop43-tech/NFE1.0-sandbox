@@ -6,102 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NFE Sandbox</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f2;
-      color: #222;
-    }
-
-    header {
-      background: #111;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 120px;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    .fuels {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    label {
-      background: #eee;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button {
-      background: #111;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    button:hover {
-      background: #333;
-    }
-
-    .result-section {
-      border-left: 4px solid #111;
-      padding-left: 12px;
-      margin-bottom: 15px;
-    }
-
-    .classification-box {
-      background: #f0f0f0;
-      border-left: 6px solid #111;
-      padding: 14px;
-      border-radius: 8px;
-      margin-bottom: 18px;
-      font-size: 18px;
-      font-weight: bold;
-    }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f2; color: #222; }
+    header { background: #111; color: white; padding: 20px; text-align: center; }
+    .container { max-width: 900px; margin: 30px auto; padding: 20px; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    textarea { width: 100%; min-height: 120px; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+    .fuels { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
+    label { background: #eee; padding: 10px; border-radius: 8px; cursor: pointer; }
+    button { background: #111; color: white; border: none; padding: 12px 18px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
+    button:hover { background: #333; }
+    .result-section { border-left: 4px solid #111; padding-left: 12px; margin-bottom: 15px; }
+    .classification-box { background: #f0f0f0; border-left: 6px solid #111; padding: 14px; border-radius: 8px; margin-bottom: 18px; font-size: 18px; font-weight: bold; }
   </style>
 </head>
 <body>
 
 <header>
   <h1>Narrative Fuel Engine Sandbox</h1>
-  <p>Test reality inputs, fuel selection, salience, pressure, collision, and Anti-NFE.</p>
+  <p>Creative generation + analysis testing with Anti-NFE guardrails.</p>
 </header>
 
 <div class="container">
 
   <div class="card">
-    <h2>Reality / Test Input</h2>
-    <textarea id="realityInput" placeholder="Example: A small business owner publicly apologizes after customers accuse the company of betraying its values."></textarea>
+    <h2>Reality / Creative Input</h2>
+    <textarea id="realityInput" placeholder="Example: Tell me a joke about a guy named Bob OR A business owner apologizes after customers accuse him of betrayal."></textarea>
 
     <h3>Select Fuel</h3>
     <div class="fuels">
@@ -120,14 +49,19 @@
   </div>
 
   <div class="card" id="results" style="display:none;">
-    <h2>NFE Analysis Output</h2>
+    <h2>NFE Output</h2>
 
     <div class="classification-box">
       Classification: <span id="classificationOutput"></span>
     </div>
 
     <div class="result-section">
-      <h3>Reality</h3>
+      <h3>Mode</h3>
+      <p id="modeOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Input</h3>
       <p id="realityOutput"></p>
     </div>
 
@@ -139,6 +73,11 @@
     <div class="result-section">
       <h3>Engine Read</h3>
       <p id="engineOutput"></p>
+    </div>
+
+    <div class="result-section">
+      <h3>Generated Test Output</h3>
+      <p id="generatedOutput"></p>
     </div>
 
     <div class="result-section">
@@ -174,11 +113,10 @@
 <script>
   function runNFE() {
     const input = document.getElementById("realityInput").value.trim();
-    const checked = Array.from(document.querySelectorAll("input[type='checkbox']:checked"))
-      .map(box => box.value);
+    const checked = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(box => box.value);
 
     if (!input) {
-      alert("Add a reality / test input first.");
+      alert("Add an input first.");
       return;
     }
 
@@ -189,6 +127,9 @@
 
     const lowerInput = input.toLowerCase();
 
+    const creativeWords = ["joke", "story", "skit", "scene", "movie", "sitcom", "commercial", "write", "create", "generate", "draft"];
+    const isCreative = creativeWords.some(word => lowerInput.includes(word));
+
     const fuelEvidence = {
       Grievance: ["angry", "wronged", "betrayed", "unfair", "humiliated", "ignored", "resent", "accused"],
       Desire: ["wants", "needs", "hopes", "dreams", "tries", "seeks", "goal", "wish"],
@@ -196,7 +137,7 @@
       Identity: ["pride", "respect", "dignity", "who i am", "belief", "values", "honor", "status"],
       Stake: ["money", "job", "cost", "loss", "gain", "deal", "power", "future"],
       Contradiction: ["but", "however", "although", "yet", "conflict", "opposite", "contradiction"],
-      Expectation: ["supposed", "expected", "should", "promise", "plan", "normal", "routine"],
+      Expectation: ["supposed", "expected", "should", "promise", "plan", "normal", "routine", "bar"],
       Territory: ["space", "home", "land", "control", "ownership", "boundary", "position", "place"]
     };
 
@@ -215,8 +156,12 @@
     });
 
     let classification = "Sandbox Test";
+    let mode = "Analysis Mode";
 
-    if (input.split(" ").length <= 7 && supported.length === 0) {
+    if (isCreative) {
+      mode = "Creative Generation Mode";
+      classification = "Creative Request / Output Test";
+    } else if (input.split(" ").length <= 7 && supported.length === 0) {
       classification = "Low Fuel / Setup Phrase";
     } else if (supported.length === 0) {
       classification = "Unsupported Fuel Selection";
@@ -227,38 +172,83 @@
     }
 
     document.getElementById("results").style.display = "block";
-
     document.getElementById("classificationOutput").innerText = classification;
+    document.getElementById("modeOutput").innerText = mode;
     document.getElementById("realityOutput").innerText = input;
 
-    document.getElementById("fuelOutput").innerText =
-      "Selected fuel: " + checked.join(", ") +
-      "\n\nSupported by input: " + (supported.length ? supported.join(", ") : "None detected") +
-      "\nUnsupported / needs evidence: " + (unsupported.length ? unsupported.join(", ") : "None");
+    if (isCreative) {
+      document.getElementById("fuelOutput").innerText =
+        "Selected creative fuel: " + checked.join(", ") +
+        "\n\nCreative note: In Creative Mode, fuel is used to shape output. It is not treated as evidence from reality.";
 
-    document.getElementById("engineOutput").innerText =
-      "The engine should not treat every selected fuel as equally valid. NFE requires evidence from the input. If fuel is selected but not supported, it remains a hypothesis, not a finding.";
+      document.getElementById("engineOutput").innerText =
+        "The engine reads this as a creative-generation request. Fuel should guide tone, conflict, character behavior, or joke structure. Unsupported fuel is allowed as creative direction, but it must not be promoted as an analytical finding.";
 
-    document.getElementById("salienceOutput").innerText =
-      supported.length
-        ? "Possible rising salience: " + supported.join(", ") + ". Pressure testing should focus only on supported fuels first."
-        : "No strong salience detected. The input may be too minimal or too neutral for a meaningful NFE read.";
+      document.getElementById("generatedOutput").innerText = generateCreativeOutput(lowerInput, checked);
 
-    document.getElementById("collisionOutput").innerText =
-      supported.includes("Contradiction")
-        ? "Possible collision detected. Look for two incompatible interpretations of the same reality."
-        : "No clear collision detected yet. More context is needed before naming competing engines.";
+      document.getElementById("salienceOutput").innerText =
+        "Creative salience: the strongest selected fuels should shape what the audience notices first. For jokes, Expectation + Contradiction usually creates the punchline engine.";
 
-    document.getElementById("dominanceOutput").innerText =
-      "Dominance is not locked. With weak or unsupported fuel evidence, no New Reality projection should be promoted.";
+      document.getElementById("collisionOutput").innerText =
+        "Creative collision: comedy or story movement comes from expectation breaking, identity being challenged, or desire running into contradiction.";
 
-    document.getElementById("antiOutput").innerText =
-      "Anti-NFE check: this may not be a narrative problem. The input may simply be a setup phrase, neutral event, joke premise, random statement, or incomplete data.";
+      document.getElementById("dominanceOutput").innerText =
+        "Creative dominance is not a prediction. It only means which fuel appears to drive the generated output most strongly.";
 
-    document.getElementById("statusOutput").innerText =
-      classification === "Low Fuel / Setup Phrase"
-        ? "NOT SIGNIFICANT — Test Only. Input does not contain enough evidence for a full NFE analysis."
-        : "TEST ONLY — not a locked discovery. Requires repeated testing, Anti-NFE review, and ledger tracking before promotion.";
+      document.getElementById("antiOutput").innerText =
+        "Anti-NFE: This is generated material, not evidence. Do not use this output to claim NFE predicted or diagnosed anything.";
+
+      document.getElementById("statusOutput").innerText =
+        "OUTPUT TEST ONLY — usable for story, joke, skit, or scene testing. Not a locked discovery.";
+    } else {
+      document.getElementById("fuelOutput").innerText =
+        "Selected fuel: " + checked.join(", ") +
+        "\n\nSupported by input: " + (supported.length ? supported.join(", ") : "None detected") +
+        "\nUnsupported / needs evidence: " + (unsupported.length ? unsupported.join(", ") : "None");
+
+      document.getElementById("engineOutput").innerText =
+        "The engine should not treat every selected fuel as equally valid. NFE requires evidence from the input. If fuel is selected but not supported, it remains a hypothesis, not a finding.";
+
+      document.getElementById("generatedOutput").innerText =
+        "No creative output generated. This input is being treated as analysis/test evidence.";
+
+      document.getElementById("salienceOutput").innerText =
+        supported.length
+          ? "Possible rising salience: " + supported.join(", ") + ". Pressure testing should focus only on supported fuels first."
+          : "No strong salience detected. The input may be too minimal or too neutral for a meaningful NFE read.";
+
+      document.getElementById("collisionOutput").innerText =
+        supported.includes("Contradiction")
+          ? "Possible collision detected. Look for two incompatible interpretations of the same reality."
+          : "No clear collision detected yet. More context is needed before naming competing engines.";
+
+      document.getElementById("dominanceOutput").innerText =
+        "Dominance is not locked. With weak or unsupported fuel evidence, no New Reality projection should be promoted.";
+
+      document.getElementById("antiOutput").innerText =
+        "Anti-NFE check: this may not be a narrative problem. The input may simply be a setup phrase, neutral event, joke premise, random statement, or incomplete data.";
+
+      document.getElementById("statusOutput").innerText =
+        classification === "Low Fuel / Setup Phrase"
+          ? "NOT SIGNIFICANT — Test Only. Input does not contain enough evidence for a full NFE analysis."
+          : "TEST ONLY — not a locked discovery. Requires repeated testing, Anti-NFE review, and ledger tracking before promotion.";
+    }
+  }
+
+  function generateCreativeOutput(lowerInput, fuels) {
+    if (lowerInput.includes("joke")) {
+      return "Bob walked into a bar and ordered a glass of water. The bartender said, 'Rough day?' Bob said, 'No, I just wanted to finally walk into one of these jokes and make a responsible choice.'";
+    }
+
+    if (lowerInput.includes("skit") || lowerInput.includes("scene")) {
+      return "SCENE TEST: A character enters expecting one reality, but the room responds by a different set of rules. The humor comes from the character trying to preserve dignity while the situation keeps contradicting them.";
+    }
+
+    if (lowerInput.includes("story")) {
+      return "STORY TEST: A character wants something simple, but the world keeps turning that desire into a test of identity. The story engine should track what fuel grows louder under pressure.";
+    }
+
+    return "CREATIVE TEST OUTPUT: Use the selected fuel to shape conflict, tone, character behavior, and audience expectation. This is a generation test, not an analytical finding.";
   }
 
   function clearAll() {
@@ -274,7 +264,10 @@ NFE SANDBOX TEST
 Classification:
 ${document.getElementById("classificationOutput").innerText}
 
-Reality:
+Mode:
+${document.getElementById("modeOutput").innerText}
+
+Input:
 ${document.getElementById("realityOutput").innerText}
 
 Fuel Inventory:
@@ -282,6 +275,9 @@ ${document.getElementById("fuelOutput").innerText}
 
 Engine Read:
 ${document.getElementById("engineOutput").innerText}
+
+Generated Test Output:
+${document.getElementById("generatedOutput").innerText}
 
 Salience / Pressure:
 ${document.getElementById("salienceOutput").innerText}
