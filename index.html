@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,16 +79,14 @@
       margin-bottom: 15px;
     }
 
-    .small {
-      font-size: 14px;
-      color: #666;
-    }
-
-    pre {
-      white-space: pre-wrap;
+    .classification-box {
       background: #f0f0f0;
-      padding: 12px;
+      border-left: 6px solid #111;
+      padding: 14px;
       border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -122,6 +121,10 @@
 
   <div class="card" id="results" style="display:none;">
     <h2>NFE Analysis Output</h2>
+
+    <div class="classification-box">
+      Classification: <span id="classificationOutput"></span>
+    </div>
 
     <div class="result-section">
       <h3>Reality</h3>
@@ -225,6 +228,7 @@
 
     document.getElementById("results").style.display = "block";
 
+    document.getElementById("classificationOutput").innerText = classification;
     document.getElementById("realityOutput").innerText = input;
 
     document.getElementById("fuelOutput").innerText =
@@ -233,8 +237,7 @@
       "\nUnsupported / needs evidence: " + (unsupported.length ? unsupported.join(", ") : "None");
 
     document.getElementById("engineOutput").innerText =
-      "Classification: " + classification +
-      "\n\nThe engine should not treat every selected fuel as equally valid. NFE requires evidence from the input. If fuel is selected but not supported, it remains a hypothesis, not a finding.";
+      "The engine should not treat every selected fuel as equally valid. NFE requires evidence from the input. If fuel is selected but not supported, it remains a hypothesis, not a finding.";
 
     document.getElementById("salienceOutput").innerText =
       supported.length
@@ -268,6 +271,9 @@
     const text = `
 NFE SANDBOX TEST
 
+Classification:
+${document.getElementById("classificationOutput").innerText}
+
 Reality:
 ${document.getElementById("realityOutput").innerText}
 
@@ -297,7 +303,7 @@ ${document.getElementById("statusOutput").innerText}
     alert("Results copied.");
   }
 </script>
-```
 
 </body>
 </html>
+```
