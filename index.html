@@ -4,32 +4,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NFE Sandbox V3</title>
+  <title>NFE Sandbox V3 Local</title>
   <style>
-    body { margin:0; font-family:Arial,sans-serif; background:#f5f5f2; color:#222; }
-    header { background:#111; color:white; padding:24px; text-align:center; }
-    .container { max-width:900px; margin:30px auto; padding:20px; }
-    .card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 8px rgba(0,0,0,.08); margin-bottom:20px; }
-    textarea, select { width:100%; padding:12px; font-size:16px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; }
-    textarea { min-height:140px; }
-    button { background:#111; color:white; border:none; padding:12px 18px; border-radius:8px; font-size:16px; cursor:pointer; margin-top:15px; }
-    button:hover { background:#333; }
-    pre { white-space:pre-wrap; background:#f0f0f0; padding:16px; border-radius:8px; }
-    .small { color:#666; font-size:14px; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f2;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    textarea, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 130px;
+    }
+
+    button {
+      background: #111;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+      margin-right: 8px;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: #f0f0f0;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .small {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border-left: 6px solid #d39e00;
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+
+    .success {
+      background: #e8f5e9;
+      border-left: 6px solid #2e7d32;
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>NFE Sandbox V3</h1>
-  <p>Input → Mode → Run NFE → Structured Output</p>
+  <h1>NFE Sandbox V3 Local</h1>
+  <p>Input → Mode → Copy AI Prompt → Paste Output → Ledger</p>
 </header>
 
 <div class="container">
 
   <div class="card">
-    <h2>Input</h2>
-    <textarea id="userInput" placeholder="Type anything here..."></textarea>
+    <h2>1. Input</h2>
+    <textarea id="userInput" placeholder="Type anything here. Example: Tell me a joke about a dog and two squirrels."></textarea>
 
     <h3>Mode</h3>
     <select id="mode">
@@ -37,56 +114,239 @@
       <option value="advanced">Advanced Analysis</option>
     </select>
 
-    <button onclick="runNFE()">Run NFE</button>
-    <p class="small">Creative = stories, jokes, skits, scenes. Advanced = analysis with guardrails.</p>
+    <button onclick="buildPrompt()">Build AI Prompt</button>
+    <button onclick="clearAll()">Clear</button>
+
+    <p class="small">
+      Creative = jokes, stories, scenes, skits. Advanced Analysis = NFE analysis with guardrails.
+    </p>
   </div>
 
-  <div class="card" id="outputCard" style="display:none;">
-    <h2>NFE Output</h2>
-    <pre id="output"></pre>
-    <button onclick="copyOutput()">Copy Output</button>
+  <div class="card" id="promptCard" style="display:none;">
+    <h2>2. Copy This Prompt Into ChatGPT / Grok / Claude</h2>
+
+    <div class="warning">
+      <strong>Local Mode:</strong> This version does not call an AI backend. It builds the prompt for you to copy and test manually.
+    </div>
+
+    <pre id="promptOutput"></pre>
+
+    <button onclick="copyPrompt()">Copy AI Prompt</button>
+  </div>
+
+  <div class="card">
+    <h2>3. Paste AI Output Here</h2>
+    <textarea id="aiOutput" placeholder="After you paste the prompt into AI, paste the AI response here."></textarea>
+
+    <h3>Ledger Classification</h3>
+    <select id="ledgerStatus">
+      <option>Output Test Only</option>
+      <option>Interesting Observation</option>
+      <option>Candidate Pattern</option>
+      <option>Repeated Pattern</option>
+      <option>Drift Warning</option>
+      <option>Not Significant</option>
+      <option>Locked Discovery</option>
+    </select>
+
+    <button onclick="buildLedger()">Build Ledger Entry</button>
+  </div>
+
+  <div class="card" id="ledgerCard" style="display:none;">
+    <h2>4. Ledger Entry</h2>
+
+    <div class="success">
+      <strong>Reminder:</strong> Ledger entries are for testing and calibration. Do not promote above Candidate Pattern without repeated testing.
+    </div>
+
+    <pre id="ledgerOutput"></pre>
+
+    <button onclick="copyLedger()">Copy Ledger Entry</button>
   </div>
 
 </div>
 
 <script>
-  async function runNFE() {
+  function buildPrompt() {
     const input = document.getElementById("userInput").value.trim();
     const mode = document.getElementById("mode").value;
-    const outputCard = document.getElementById("outputCard");
-    const output = document.getElementById("output");
 
     if (!input) {
       alert("Type something first.");
       return;
     }
 
-    outputCard.style.display = "block";
-    output.innerText = "Running NFE...";
+    let prompt = "";
 
-    try {
-      const res = await fetch("/api/nfe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input, mode })
-      });
+    if (mode === "creative") {
+      prompt = `NFE CREATIVE STRUCTURING REQUEST
 
-      const data = await res.json();
+User Input:
+${input}
 
-      if (!res.ok) {
-        output.innerText = "Error:\n" + (data.error || "Something went wrong.");
-        return;
-      }
+Mode:
+Creative
 
-      output.innerText = data.result;
-    } catch (err) {
-      output.innerText = "Network error. Check Vercel deployment and api/nfe.js.";
+Task:
+Use the Narrative Fuel Engine to generate a creative output from the user's input.
+
+Rules:
+- Detect the fuel yourself.
+- Do not ask the user to select fuel.
+- Use fuel as creative direction, not evidence.
+- Use the user's actual subject and details.
+- Do not substitute unrelated names, characters, or examples.
+- Do not claim this proves NFE predicted or discovered anything.
+- Label the result TEST ONLY.
+
+Return exactly this structure:
+
+Classification:
+Creative Request / Output Test
+
+Detected Fuel:
+List the likely fuel charges shaping the creative request.
+
+Engine Read:
+Explain what the request makes important and what kind of creative engine is forming.
+
+Generated Output:
+Write the joke, story, scene, skit, or creative piece requested.
+
+Fuel Check:
+Explain which fuels shaped the output and which ones were weak or absent.
+
+Anti-NFE:
+State clearly that this is generated creative material, not evidence, prediction, or validation.
+
+Promotion Status:
+OUTPUT TEST ONLY — not a locked discovery.`;
+    } else {
+      prompt = `NFE ADVANCED ANALYSIS REQUEST
+
+User Input:
+${input}
+
+Mode:
+Advanced Analysis
+
+Task:
+Use the Narrative Fuel Engine to analyze the input.
+
+Rules:
+- Detect the fuel yourself.
+- Do not ask the user to select fuel.
+- Only treat fuel as supported if the input gives evidence.
+- Unsupported fuel must remain a hypothesis, not a finding.
+- Do not over-narrativize.
+- Include Anti-NFE before any strong conclusion.
+- Do not claim prediction, diagnosis, certainty, or validation.
+- Label the result TEST ONLY unless there is repeated ledger evidence.
+
+Return exactly this structure:
+
+Classification:
+Analysis Request / Test Only
+
+Reality:
+Restate only the observable facts from the input.
+
+Detected Fuel:
+List supported fuels and briefly cite what in the input supports them.
+
+Unsupported Assumptions:
+List any fuels or interpretations that would require more evidence.
+
+Engine Read:
+Explain what interpretation engine may be forming.
+
+Salience / Pressure:
+Identify which fuel, if any, becomes louder under pressure. If no pressure exists, say so.
+
+Collision:
+Identify competing interpretations only if the input supports them.
+
+Dominance / New Reality:
+Do not lock dominance unless the evidence supports it. If weak, say dominance is not locked.
+
+Anti-NFE:
+Explain what non-narrative explanation may fit better, such as structure, economics, logistics, randomness, technical limits, or incomplete data.
+
+Promotion Status:
+TEST ONLY — not a locked discovery.`;
     }
+
+    document.getElementById("promptCard").style.display = "block";
+    document.getElementById("promptOutput").innerText = prompt;
   }
 
-  function copyOutput() {
-    navigator.clipboard.writeText(document.getElementById("output").innerText);
-    alert("Copied.");
+  function buildLedger() {
+    const input = document.getElementById("userInput").value.trim();
+    const mode = document.getElementById("mode").value;
+    const prompt = document.getElementById("promptOutput").innerText.trim();
+    const aiOutput = document.getElementById("aiOutput").value.trim();
+    const status = document.getElementById("ledgerStatus").value;
+
+    if (!input) {
+      alert("No original input found.");
+      return;
+    }
+
+    if (!aiOutput) {
+      alert("Paste the AI output first.");
+      return;
+    }
+
+    const ledger = `NFE LEDGER ENTRY
+
+Date:
+${new Date().toLocaleString()}
+
+Mode:
+${mode === "creative" ? "Creative" : "Advanced Analysis"}
+
+Original Input:
+${input}
+
+Prompt Used:
+${prompt || "No prompt was built."}
+
+AI / NFE Output:
+${aiOutput}
+
+Ledger Classification:
+${status}
+
+Calibration Note:
+This entry records an output test, not proof of predictive or analytical validity.
+
+Anti-NFE Note:
+Review whether the result is useful because of NFE structure or merely because the AI produced plausible text.
+
+Promotion Rule:
+Do not promote above Candidate Pattern without repeated testing, adversarial review, and ledger comparison.`;
+
+    document.getElementById("ledgerCard").style.display = "block";
+    document.getElementById("ledgerOutput").innerText = ledger;
+  }
+
+  function copyPrompt() {
+    navigator.clipboard.writeText(document.getElementById("promptOutput").innerText);
+    alert("AI prompt copied.");
+  }
+
+  function copyLedger() {
+    navigator.clipboard.writeText(document.getElementById("ledgerOutput").innerText);
+    alert("Ledger entry copied.");
+  }
+
+  function clearAll() {
+    document.getElementById("userInput").value = "";
+    document.getElementById("aiOutput").value = "";
+    document.getElementById("promptOutput").innerText = "";
+    document.getElementById("ledgerOutput").innerText = "";
+    document.getElementById("promptCard").style.display = "none";
+    document.getElementById("ledgerCard").style.display = "none";
   }
 </script>
 
