@@ -4,33 +4,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NFE Sandbox</title>
+  <title>NFE Sandbox V2</title>
   <style>
     body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f2; color: #222; }
     header { background: #111; color: white; padding: 20px; text-align: center; }
-    .container { max-width: 900px; margin: 30px auto; padding: 20px; }
+    .container { max-width: 1000px; margin: 30px auto; padding: 20px; }
     .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    textarea { width: 100%; min-height: 120px; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+    textarea, select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+    textarea { min-height: 120px; }
     .fuels { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
     label { background: #eee; padding: 10px; border-radius: 8px; cursor: pointer; }
-    button { background: #111; color: white; border: none; padding: 12px 18px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
+    button { background: #111; color: white; border: none; padding: 12px 18px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; margin-right: 8px; }
     button:hover { background: #333; }
     .result-section { border-left: 4px solid #111; padding-left: 12px; margin-bottom: 15px; }
     .classification-box { background: #f0f0f0; border-left: 6px solid #111; padding: 14px; border-radius: 8px; margin-bottom: 18px; font-size: 18px; font-weight: bold; }
+    pre { white-space: pre-wrap; background: #f0f0f0; padding: 14px; border-radius: 8px; }
+    .warning { background: #fff3cd; border-left: 6px solid #d39e00; padding: 14px; border-radius: 8px; margin-bottom: 18px; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Narrative Fuel Engine Sandbox</h1>
-  <p>Creative generation + analysis testing with Anti-NFE guardrails.</p>
+  <h1>NFE Sandbox V2</h1>
+  <p>Structure prompts, test outputs, and protect discovery status.</p>
 </header>
 
 <div class="container">
 
   <div class="card">
-    <h2>Reality / Creative Input</h2>
-    <textarea id="realityInput" placeholder="Example: Tell me a joke about a guy named Bob OR A business owner apologizes after customers accuse him of betrayal."></textarea>
+    <h2>1. Input</h2>
+    <textarea id="userInput" placeholder="Example: Tell me a joke about a dog and two squirrels OR A company apologizes after customers accuse it of betrayal."></textarea>
 
     <h3>Select Fuel</h3>
     <div class="fuels">
@@ -44,12 +47,12 @@
       <label><input type="checkbox" value="Territory"> Territory</label>
     </div>
 
-    <button onclick="runNFE()">Run NFE Test</button>
+    <button onclick="buildPrompt()">Build NFE Prompt</button>
     <button onclick="clearAll()">Clear</button>
   </div>
 
-  <div class="card" id="results" style="display:none;">
-    <h2>NFE Output</h2>
+  <div class="card" id="promptCard" style="display:none;">
+    <h2>2. NFE Prompt Package</h2>
 
     <div class="classification-box">
       Classification: <span id="classificationOutput"></span>
@@ -61,66 +64,59 @@
     </div>
 
     <div class="result-section">
-      <h3>Input</h3>
-      <p id="realityOutput"></p>
+      <h3>Fuel Read</h3>
+      <p id="fuelReadOutput"></p>
+    </div>
+
+    <div class="warning">
+      <strong>Guardrail:</strong> Creative fuel may guide output, but analysis fuel requires evidence. Nothing here is a locked discovery.
     </div>
 
     <div class="result-section">
-      <h3>Fuel Inventory</h3>
-      <p id="fuelOutput"></p>
+      <h3>Copy This Into AI / NFE Backend</h3>
+      <pre id="promptOutput"></pre>
     </div>
 
-    <div class="result-section">
-      <h3>Engine Read</h3>
-      <p id="engineOutput"></p>
-    </div>
+    <button onclick="copyPrompt()">Copy NFE Prompt</button>
+  </div>
 
-    <div class="result-section">
-      <h3>Generated Test Output</h3>
-      <p id="generatedOutput"></p>
-    </div>
+  <div class="card">
+    <h2>3. Paste AI / NFE Output Here</h2>
+    <textarea id="aiOutput" placeholder="Paste the AI/NFE response here after testing."></textarea>
 
-    <div class="result-section">
-      <h3>Salience / Pressure</h3>
-      <p id="salienceOutput"></p>
-    </div>
+    <h3>Ledger Classification</h3>
+    <select id="ledgerStatus">
+      <option>Output Test Only</option>
+      <option>Interesting Observation</option>
+      <option>Candidate Pattern</option>
+      <option>Repeated Pattern</option>
+      <option>Drift Warning</option>
+      <option>Not Significant</option>
+      <option>Locked Discovery</option>
+    </select>
 
-    <div class="result-section">
-      <h3>Collision</h3>
-      <p id="collisionOutput"></p>
-    </div>
+    <button onclick="buildLedgerEntry()">Build Ledger Entry</button>
+  </div>
 
-    <div class="result-section">
-      <h3>Dominance / New Reality</h3>
-      <p id="dominanceOutput"></p>
-    </div>
-
-    <div class="result-section">
-      <h3>Anti-NFE</h3>
-      <p id="antiOutput"></p>
-    </div>
-
-    <div class="result-section">
-      <h3>Promotion Status</h3>
-      <p id="statusOutput"></p>
-    </div>
-
-    <button onclick="copyResults()">Copy Results</button>
+  <div class="card" id="ledgerCard" style="display:none;">
+    <h2>4. Ledger Entry</h2>
+    <pre id="ledgerOutput"></pre>
+    <button onclick="copyLedger()">Copy Ledger Entry</button>
   </div>
 
 </div>
 
 <script>
-  function runNFE() {
-    const input = document.getElementById("realityInput").value.trim();
-    const checked = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(box => box.value);
+  function buildPrompt() {
+    const input = document.getElementById("userInput").value.trim();
+    const fuels = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(box => box.value);
 
     if (!input) {
       alert("Add an input first.");
       return;
     }
 
-    if (checked.length === 0) {
+    if (fuels.length === 0) {
       alert("Select at least one fuel.");
       return;
     }
@@ -144,159 +140,213 @@
     const supported = [];
     const unsupported = [];
 
-    checked.forEach(fuel => {
+    fuels.forEach(fuel => {
       const keywords = fuelEvidence[fuel] || [];
       const hasEvidence = keywords.some(word => lowerInput.includes(word.toLowerCase()));
 
-      if (hasEvidence) {
-        supported.push(fuel);
-      } else {
-        unsupported.push(fuel);
-      }
+      if (hasEvidence) supported.push(fuel);
+      else unsupported.push(fuel);
     });
 
-    let classification = "Sandbox Test";
     let mode = "Analysis Mode";
+    let classification = "Sandbox Test";
 
     if (isCreative) {
-      mode = "Creative Generation Mode";
+      mode = "Creative Structuring Mode";
       classification = "Creative Request / Output Test";
     } else if (input.split(" ").length <= 7 && supported.length === 0) {
+      mode = "Low-Fuel Test Mode";
       classification = "Low Fuel / Setup Phrase";
     } else if (supported.length === 0) {
+      mode = "Analysis Mode";
       classification = "Unsupported Fuel Selection";
     } else if (supported.length <= 2) {
+      mode = "Analysis Mode";
       classification = "Light Fuel Signal";
     } else {
+      mode = "Analysis Mode";
       classification = "Active Fuel Signal";
     }
 
-    document.getElementById("results").style.display = "block";
+    const fuelRead =
+      "Selected Fuel: " + fuels.join(", ") +
+      "\nSupported by input: " + (supported.length ? supported.join(", ") : "None detected") +
+      "\nUnsupported / creative-only: " + (unsupported.length ? unsupported.join(", ") : "None");
+
+    const prompt = buildNFEPrompt(input, mode, classification, fuels, supported, unsupported, isCreative);
+
+    document.getElementById("promptCard").style.display = "block";
     document.getElementById("classificationOutput").innerText = classification;
     document.getElementById("modeOutput").innerText = mode;
-    document.getElementById("realityOutput").innerText = input;
-
-    if (isCreative) {
-      document.getElementById("fuelOutput").innerText =
-        "Selected creative fuel: " + checked.join(", ") +
-        "\n\nCreative note: In Creative Mode, fuel is used to shape output. It is not treated as evidence from reality.";
-
-      document.getElementById("engineOutput").innerText =
-        "The engine reads this as a creative-generation request. Fuel should guide tone, conflict, character behavior, or joke structure. Unsupported fuel is allowed as creative direction, but it must not be promoted as an analytical finding.";
-
-      document.getElementById("generatedOutput").innerText = generateCreativeOutput(lowerInput, checked);
-
-      document.getElementById("salienceOutput").innerText =
-        "Creative salience: the strongest selected fuels should shape what the audience notices first. For jokes, Expectation + Contradiction usually creates the punchline engine.";
-
-      document.getElementById("collisionOutput").innerText =
-        "Creative collision: comedy or story movement comes from expectation breaking, identity being challenged, or desire running into contradiction.";
-
-      document.getElementById("dominanceOutput").innerText =
-        "Creative dominance is not a prediction. It only means which fuel appears to drive the generated output most strongly.";
-
-      document.getElementById("antiOutput").innerText =
-        "Anti-NFE: This is generated material, not evidence. Do not use this output to claim NFE predicted or diagnosed anything.";
-
-      document.getElementById("statusOutput").innerText =
-        "OUTPUT TEST ONLY — usable for story, joke, skit, or scene testing. Not a locked discovery.";
-    } else {
-      document.getElementById("fuelOutput").innerText =
-        "Selected fuel: " + checked.join(", ") +
-        "\n\nSupported by input: " + (supported.length ? supported.join(", ") : "None detected") +
-        "\nUnsupported / needs evidence: " + (unsupported.length ? unsupported.join(", ") : "None");
-
-      document.getElementById("engineOutput").innerText =
-        "The engine should not treat every selected fuel as equally valid. NFE requires evidence from the input. If fuel is selected but not supported, it remains a hypothesis, not a finding.";
-
-      document.getElementById("generatedOutput").innerText =
-        "No creative output generated. This input is being treated as analysis/test evidence.";
-
-      document.getElementById("salienceOutput").innerText =
-        supported.length
-          ? "Possible rising salience: " + supported.join(", ") + ". Pressure testing should focus only on supported fuels first."
-          : "No strong salience detected. The input may be too minimal or too neutral for a meaningful NFE read.";
-
-      document.getElementById("collisionOutput").innerText =
-        supported.includes("Contradiction")
-          ? "Possible collision detected. Look for two incompatible interpretations of the same reality."
-          : "No clear collision detected yet. More context is needed before naming competing engines.";
-
-      document.getElementById("dominanceOutput").innerText =
-        "Dominance is not locked. With weak or unsupported fuel evidence, no New Reality projection should be promoted.";
-
-      document.getElementById("antiOutput").innerText =
-        "Anti-NFE check: this may not be a narrative problem. The input may simply be a setup phrase, neutral event, joke premise, random statement, or incomplete data.";
-
-      document.getElementById("statusOutput").innerText =
-        classification === "Low Fuel / Setup Phrase"
-          ? "NOT SIGNIFICANT — Test Only. Input does not contain enough evidence for a full NFE analysis."
-          : "TEST ONLY — not a locked discovery. Requires repeated testing, Anti-NFE review, and ledger tracking before promotion.";
-    }
+    document.getElementById("fuelReadOutput").innerText = fuelRead;
+    document.getElementById("promptOutput").innerText = prompt;
   }
 
-  function generateCreativeOutput(lowerInput, fuels) {
-    if (lowerInput.includes("joke")) {
-      return "Bob walked into a bar and ordered a glass of water. The bartender said, 'Rough day?' Bob said, 'No, I just wanted to finally walk into one of these jokes and make a responsible choice.'";
+  function buildNFEPrompt(input, mode, classification, fuels, supported, unsupported, isCreative) {
+    if (isCreative) {
+      return `NFE CREATIVE STRUCTURING REQUEST
+
+Input:
+${input}
+
+Mode:
+${mode}
+
+Classification:
+${classification}
+
+Selected Fuel:
+${fuels.join(", ")}
+
+Important Rule:
+Use selected fuel as creative direction, not as evidence.
+Do not claim this output proves anything about reality.
+Do not promote this as a discovery.
+
+Task:
+Generate a creative output based on the input using NFE structure.
+
+Return in this format:
+
+1. Engine Read
+- What does this creative request make important?
+- Which selected fuel should drive the output?
+- What expectation or collision should shape the scene/joke/story?
+
+2. Generated Output
+- Write the joke, story, scene, skit, or creative piece.
+- Use the user's actual subject and details.
+- Do not substitute unrelated names or examples.
+
+3. Fuel Check
+- Which fuels visibly shaped the output?
+- Which selected fuels were weak or unused?
+
+4. Anti-NFE
+- State clearly that this is generated material, not evidence or prediction.
+
+5. Promotion Status
+- OUTPUT TEST ONLY. Not a locked discovery.`;
     }
 
-    if (lowerInput.includes("skit") || lowerInput.includes("scene")) {
-      return "SCENE TEST: A character enters expecting one reality, but the room responds by a different set of rules. The humor comes from the character trying to preserve dignity while the situation keeps contradicting them.";
+    return `NFE ANALYSIS STRUCTURING REQUEST
+
+Input:
+${input}
+
+Mode:
+${mode}
+
+Classification:
+${classification}
+
+Selected Fuel:
+${fuels.join(", ")}
+
+Supported Fuel:
+${supported.length ? supported.join(", ") : "None detected"}
+
+Unsupported Fuel:
+${unsupported.length ? unsupported.join(", ") : "None"}
+
+Important Rule:
+Only treat fuel as analytical evidence if the input supports it.
+Unsupported fuel remains a hypothesis, not a finding.
+
+Task:
+Analyze the input using NFE structure.
+
+Return in this format:
+
+1. Reality
+- Restate only the shared observable facts.
+
+2. Fuel Inventory
+- Supported fuel with evidence.
+- Unsupported fuel requiring more evidence.
+
+3. Engine Read
+- What interpretation engine may be forming?
+
+4. Salience / Pressure
+- Which fuel, if any, is rising under pressure?
+- If no pressure exists, say so.
+
+5. Collision
+- Identify competing interpretations only if the input supports them.
+
+6. Dominance / New Reality
+- Do not lock dominance unless evidence supports it.
+
+7. Anti-NFE
+- Could this be better explained by structure, randomness, economics, logistics, or incomplete data?
+
+8. Promotion Status
+- TEST ONLY unless repeated evidence supports promotion.`;
+  }
+
+  function buildLedgerEntry() {
+    const input = document.getElementById("userInput").value.trim();
+    const prompt = document.getElementById("promptOutput").innerText.trim();
+    const aiOutput = document.getElementById("aiOutput").value.trim();
+    const status = document.getElementById("ledgerStatus").value;
+
+    if (!input) {
+      alert("No original input found.");
+      return;
     }
 
-    if (lowerInput.includes("story")) {
-      return "STORY TEST: A character wants something simple, but the world keeps turning that desire into a test of identity. The story engine should track what fuel grows louder under pressure.";
+    if (!aiOutput) {
+      alert("Paste the AI/NFE output first.");
+      return;
     }
 
-    return "CREATIVE TEST OUTPUT: Use the selected fuel to shape conflict, tone, character behavior, and audience expectation. This is a generation test, not an analytical finding.";
+    const ledger = `NFE LEDGER ENTRY
+
+Date:
+${new Date().toLocaleString()}
+
+Original Input:
+${input}
+
+Prompt Package Used:
+${prompt || "No prompt package copied."}
+
+AI / NFE Output:
+${aiOutput}
+
+Ledger Classification:
+${status}
+
+Calibration Note:
+This entry records an output test, not proof of predictive or analytical validity.
+
+Anti-NFE Note:
+Review whether the output is useful because of NFE structure or merely because the AI produced plausible text.
+
+Promotion Rule:
+Do not promote above Candidate Pattern without repeated testing, adversarial review, and ledger comparison.`;
+
+    document.getElementById("ledgerCard").style.display = "block";
+    document.getElementById("ledgerOutput").innerText = ledger;
+  }
+
+  function copyPrompt() {
+    navigator.clipboard.writeText(document.getElementById("promptOutput").innerText);
+    alert("NFE prompt copied.");
+  }
+
+  function copyLedger() {
+    navigator.clipboard.writeText(document.getElementById("ledgerOutput").innerText);
+    alert("Ledger entry copied.");
   }
 
   function clearAll() {
-    document.getElementById("realityInput").value = "";
+    document.getElementById("userInput").value = "";
+    document.getElementById("aiOutput").value = "";
     document.querySelectorAll("input[type='checkbox']").forEach(box => box.checked = false);
-    document.getElementById("results").style.display = "none";
-  }
-
-  function copyResults() {
-    const text = `
-NFE SANDBOX TEST
-
-Classification:
-${document.getElementById("classificationOutput").innerText}
-
-Mode:
-${document.getElementById("modeOutput").innerText}
-
-Input:
-${document.getElementById("realityOutput").innerText}
-
-Fuel Inventory:
-${document.getElementById("fuelOutput").innerText}
-
-Engine Read:
-${document.getElementById("engineOutput").innerText}
-
-Generated Test Output:
-${document.getElementById("generatedOutput").innerText}
-
-Salience / Pressure:
-${document.getElementById("salienceOutput").innerText}
-
-Collision:
-${document.getElementById("collisionOutput").innerText}
-
-Dominance / New Reality:
-${document.getElementById("dominanceOutput").innerText}
-
-Anti-NFE:
-${document.getElementById("antiOutput").innerText}
-
-Promotion Status:
-${document.getElementById("statusOutput").innerText}
-    `;
-
-    navigator.clipboard.writeText(text);
-    alert("Results copied.");
+    document.getElementById("promptCard").style.display = "none";
+    document.getElementById("ledgerCard").style.display = "none";
   }
 </script>
 
