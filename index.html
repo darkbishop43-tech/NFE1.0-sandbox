@@ -114,7 +114,7 @@
       <option value="advanced">Advanced Analysis</option>
     </select>
 
-    <button onclick="buildPrompt()">Build AI Prompt</button>
+    <button onclick="buildPrompt()">Build Copy/Paste Prompt</button>
     <button onclick="clearAll()">Clear</button>
 
     <p class="small">
@@ -131,12 +131,17 @@
 
     <pre id="promptOutput"></pre>
 
-    <button onclick="copyPrompt()">Copy AI Prompt</button>
+    <button onclick="copyPrompt()">Copy Prompt</button>
   </div>
 
   <div class="card">
-    <h2>3. Paste AI Output Here</h2>
-    <textarea id="aiOutput" placeholder="After you paste the prompt into AI, paste the AI response here."></textarea>
+    <h2>3. Paste the AI ANSWER Here</h2>
+
+    <div class="warning">
+      <strong>Important:</strong> Do not paste the prompt here. Paste the answer that ChatGPT, Grok, Claude, or your NFE backend gives back.
+    </div>
+
+    <textarea id="aiOutput" placeholder="Paste the AI answer here, not the prompt."></textarea>
 
     <h3>Ledger Classification</h3>
     <select id="ledgerStatus">
@@ -176,10 +181,40 @@
       return;
     }
 
+    const driftCheck = `
+DRIFT CHECK
+
+Treat this request independently.
+
+Do not assume prior NFE discoveries.
+Do not assume previous tests were valid.
+Do not assume previous outputs were correct.
+
+Only use information contained in the current input and prompt.
+
+If a conclusion depends on prior NFE findings, explicitly state:
+"Additional evidence required."
+
+Do not promote observations to discoveries.
+Do not promote patterns to validated findings.
+Do not claim prediction, diagnosis, or certainty.
+
+Default status:
+TEST ONLY.
+
+If evidence is weak, incomplete, ambiguous, or missing:
+say so explicitly.
+
+The ledger is authoritative.
+This output is not.
+`;
+
     let prompt = "";
 
     if (mode === "creative") {
       prompt = `NFE CREATIVE STRUCTURING REQUEST
+
+${driftCheck}
 
 User Input:
 ${input}
@@ -223,6 +258,8 @@ Promotion Status:
 OUTPUT TEST ONLY — not a locked discovery.`;
     } else {
       prompt = `NFE ADVANCED ANALYSIS REQUEST
+
+${driftCheck}
 
 User Input:
 ${input}
@@ -293,7 +330,7 @@ TEST ONLY — not a locked discovery.`;
     }
 
     if (!aiOutput) {
-      alert("Paste the AI output first.");
+      alert("Paste the AI answer first.");
       return;
     }
 
@@ -332,7 +369,7 @@ Do not promote above Candidate Pattern without repeated testing, adversarial rev
 
   function copyPrompt() {
     navigator.clipboard.writeText(document.getElementById("promptOutput").innerText);
-    alert("AI prompt copied.");
+    alert("Prompt copied.");
   }
 
   function copyLedger() {
