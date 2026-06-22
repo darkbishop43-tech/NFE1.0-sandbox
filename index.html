@@ -591,7 +591,47 @@ function text(id) { return document.getElementById(id).innerText.trim(); }
 function setText(id, value) { document.getElementById(id).innerText = value; }
 function show(id) { document.getElementById(id).style.display = "block"; }
 function esc(v) {
-  return String(v || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  return String(v || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function copyPrompt() {
+  copyTextFromElement("promptOutput", "Prompt copied.");
+}
+
+function copyLedger() {
+  copyTextFromElement("ledgerOutput", "Full ledger entry copied.");
+}
+
+function copyCompactLedger() {
+  copyTextFromElement("compactLedgerOutput", "Compact ledger entry copied.");
+}
+
+function copyTextFromElement(id, message) {
+  const textToCopy = document.getElementById(id).innerText.trim();
+
+  if (!textToCopy) {
+    alert("Nothing to copy.");
+    return;
+  }
+
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => {
+      alert(message);
+    })
+    .catch(() => {
+      const tempBox = document.createElement("textarea");
+      tempBox.value = textToCopy;
+      document.body.appendChild(tempBox);
+      tempBox.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempBox);
+      alert(message);
+    });
 }
 
 renderSavedLedger();
