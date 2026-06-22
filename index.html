@@ -516,7 +516,34 @@ Rules:
 - Do not substitute unrelated names, characters, or examples.
 - Do not claim this proves NFE predicted or discovered anything.
 - Label the result TEST ONLY.
+USER DETAIL RULE
 
+Only use information explicitly provided in the current User Input.
+
+Do not use:
+- prior conversations
+- remembered user information
+- profile information
+- inferred personal details
+- locations
+- occupations
+- family members
+- projects
+- hobbies
+PERSONALIZATION RULE
+
+Do not create named versions of the user.
+
+Do not assign names, locations, biographies, or personal histories to the user unless explicitly provided in the User Input.
+
+If a protagonist is needed:
+use a generic character.
+unless they appear directly in the current User Input.
+
+If a detail is not present in the current User Input:
+do not invent it.
+
+Treat the current User Input as the only source of user-specific facts.
 Return exactly this structure:
 
 Classification:
@@ -563,7 +590,27 @@ Rules:
 - Include Anti-NFE before any strong conclusion.
 - Do not claim prediction, diagnosis, certainty, or validation.
 - Label the result TEST ONLY unless there is repeated ledger evidence.
+USER DETAIL RULE
 
+Only use information explicitly provided in the current User Input.
+
+Do not use:
+- prior conversations
+- remembered user information
+- profile information
+- inferred personal details
+- locations
+- occupations
+- family members
+- projects
+- hobbies
+
+unless they appear directly in the current User Input.
+
+If a detail is not present in the current User Input:
+do not invent it.
+
+Treat the current User Input as the only source of user-specific facts.
 Return exactly this structure:
 
 Classification:
@@ -574,6 +621,12 @@ Restate only the observable facts from the input.
 
 Detected Fuel:
 List supported fuels and briefly cite what in the input supports them.
+
+PERSONAL ASSUMPTION RULE
+
+User identity, emotions, motives, intentions, beliefs, and personal circumstances are unsupported assumptions unless directly stated in the User Input.
+
+Place such assumptions under:
 
 Unsupported Assumptions:
 List any fuels or interpretations that would require more evidence.
