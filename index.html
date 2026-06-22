@@ -1,180 +1,57 @@
+<!-- NFE Sandbox v0.4 -->
+<!-- Data Model + Project Categories + Tags + Notes + Auto Compact Summary -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NFE Sandbox V0.3 Ledger Management</title>
+  <title>NFE Sandbox V0.4</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f2;
-      color: #222;
-    }
-
-    header {
-      background: #111;
-      color: white;
-      padding: 28px 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin-bottom: 8px;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 22px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
-    }
-
-    textarea, select, input {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
-
-    textarea {
-      min-height: 130px;
-    }
-
-    button {
-      background: #111;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-      margin-right: 8px;
-    }
-
-    button:hover {
-      background: #333;
-    }
-
-    .danger {
-      background: #8b0000;
-    }
-
-    .danger:hover {
-      background: #a60000;
-    }
-
-    .secondary {
-      background: #555;
-    }
-
-    .secondary:hover {
-      background: #666;
-    }
-
-    pre {
-      white-space: pre-wrap;
-      background: #f0f0f0;
-      padding: 16px;
-      border-radius: 8px;
-      font-size: 15px;
-      overflow-x: auto;
-    }
-
-    .small {
-      color: #666;
-      font-size: 14px;
-    }
-
-    .warning {
-      background: #fff3cd;
-      border-left: 6px solid #d39e00;
-      padding: 14px;
-      border-radius: 8px;
-      margin-top: 15px;
-      margin-bottom: 15px;
-    }
-
-    .success {
-      background: #e8f5e9;
-      border-left: 6px solid #2e7d32;
-      padding: 14px;
-      border-radius: 8px;
-      margin-top: 15px;
-      margin-bottom: 15px;
-    }
-
-    .ledger-item {
-      background: #f7f7f7;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .ledger-item strong {
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .top-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .badge {
-      display: inline-block;
-      background: #111;
-      color: white;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 12px;
-      margin-bottom: 8px;
-      margin-right: 6px;
-    }
-
-    .id-badge {
-      background: #2e7d32;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    @media (max-width: 700px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    body { margin:0; font-family:Arial,sans-serif; background:#f5f5f2; color:#222; }
+    header { background:#111; color:white; padding:28px 20px; text-align:center; }
+    .container { max-width:1000px; margin:30px auto; padding:20px; }
+    .card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 8px rgba(0,0,0,.08); margin-bottom:20px; }
+    textarea, select, input { width:100%; padding:12px; font-size:16px; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; margin-bottom:10px; }
+    textarea { min-height:120px; }
+    button { background:#111; color:white; border:none; padding:12px 18px; border-radius:8px; font-size:16px; cursor:pointer; margin-top:10px; margin-right:8px; }
+    button:hover { background:#333; }
+    .danger { background:#8b0000; }
+    .danger:hover { background:#a60000; }
+    .secondary { background:#555; }
+    pre { white-space:pre-wrap; background:#f0f0f0; padding:16px; border-radius:8px; font-size:15px; overflow-x:auto; }
+    .small { color:#666; font-size:14px; }
+    .warning { background:#fff3cd; border-left:6px solid #d39e00; padding:14px; border-radius:8px; margin:15px 0; }
+    .success { background:#e8f5e9; border-left:6px solid #2e7d32; padding:14px; border-radius:8px; margin:15px 0; }
+    .ledger-item { background:#f7f7f7; border:1px solid #ddd; border-radius:10px; padding:14px; margin-bottom:12px; }
+    .badge { display:inline-block; background:#111; color:white; padding:5px 9px; border-radius:999px; font-size:12px; margin-bottom:8px; margin-right:6px; }
+    .id-badge { background:#2e7d32; }
+    .project-badge { background:#064b7a; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media(max-width:700px){ .grid{ grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>NFE Sandbox V0.3</h1>
-  <p>Prompt Builder → Output Capture → Full Ledger → Compact Ledger → Search / Export</p>
+  <h1>NFE Sandbox V0.4</h1>
+  <p>Data Model → Projects → Tags → Notes → Compact + Full Ledger</p>
 </header>
 
 <div class="container">
 
   <div class="card">
     <h2>1. Input</h2>
-    <textarea id="userInput" placeholder="Type anything here. Example: Tell me a joke about a dog and two squirrels."></textarea>
+
+    <h3>Project</h3>
+    <select id="project">
+      <option>NFE Framework</option>
+      <option>Sassy</option>
+      <option>Holloway Paradox</option>
+      <option>WoW Campaign</option>
+      <option>Market Testing</option>
+      <option>Other</option>
+    </select>
 
     <h3>Mode</h3>
     <select id="mode">
@@ -182,33 +59,22 @@
       <option value="advanced">Advanced Analysis</option>
     </select>
 
+    <h3>Original Input</h3>
+    <textarea id="userInput" placeholder="Type the test input here."></textarea>
+
     <button onclick="buildPrompt()">Build Copy/Paste Prompt</button>
     <button onclick="clearAll()" class="secondary">Clear</button>
-
-    <p class="small">
-      Creative = jokes, stories, scenes, skits. Advanced Analysis = NFE analysis with guardrails.
-    </p>
   </div>
 
   <div class="card" id="promptCard" style="display:none;">
-    <h2>2. Copy This Prompt Into ChatGPT / Grok / Claude</h2>
-
-    <div class="warning">
-      <strong>Local Mode:</strong> This version does not call an AI backend. It builds the prompt for you to copy and test manually.
-    </div>
-
+    <h2>2. Copy Prompt</h2>
+    <div class="warning"><strong>Local Mode:</strong> This app builds the prompt. It does not call an AI backend yet.</div>
     <pre id="promptOutput"></pre>
-
     <button onclick="copyPrompt()">Copy Prompt</button>
   </div>
 
   <div class="card">
-    <h2>3. Paste the AI Answer Here</h2>
-
-    <div class="warning">
-      <strong>Important:</strong> Paste the AI answer here, not the prompt.
-    </div>
-
+    <h2>3. Paste AI Answer</h2>
     <textarea id="aiOutput" placeholder="Paste the AI answer here."></textarea>
 
     <h3>Ledger Classification</h3>
@@ -222,18 +88,22 @@
       <option>Locked Discovery</option>
     </select>
 
-    <h3>Compact Summary</h3>
-    <textarea id="compactSummary" placeholder="Short summary for searchable ledger. Example: Workflow became a quest-chain comedy; main fuels were progress, control, achievement."></textarea>
+    <h3>Tags</h3>
+    <input id="tags" placeholder="Example: workflow, ledger, creative-test" />
 
+    <h3>Testing Notes</h3>
+    <textarea id="notes" placeholder="Human notes. Example: v0.4 test, compact summary worked, project filter needed."></textarea>
+
+    <h3>Compact Summary</h3>
+    <textarea id="compactSummary" placeholder="Click Auto Compact Summary or write your own short summary."></textarea>
+
+    <button onclick="autoCompactSummary()">Auto Compact Summary</button>
     <button onclick="buildLedger()">Build Ledger Entry</button>
   </div>
 
   <div class="card" id="ledgerCard" style="display:none;">
     <h2>4. Ledger Entry</h2>
-
-    <div class="success">
-      <strong>Reminder:</strong> Ledger entries are for testing and calibration. Do not promote above Candidate Pattern without repeated testing.
-    </div>
+    <div class="success"><strong>Reminder:</strong> Ledger entries are for calibration. The ledger is authoritative. This output is not.</div>
 
     <h3>Compact Entry</h3>
     <pre id="compactLedgerOutput"></pre>
@@ -249,18 +119,27 @@
   <div class="card">
     <h2>5. Saved Ledger Management</h2>
 
-    <p class="small">
-      Saved locally in this browser/app. This does not upload anywhere.
-    </p>
-
     <div class="grid">
       <div>
         <h3>Search</h3>
-        <input id="ledgerSearch" placeholder="Search input, summary, output, ID..." oninput="renderSavedLedger()" />
+        <input id="ledgerSearch" placeholder="Search input, summary, output, ID, tags..." oninput="renderSavedLedger()" />
       </div>
 
       <div>
-        <h3>Filter</h3>
+        <h3>Project Filter</h3>
+        <select id="projectFilter" onchange="renderSavedLedger()">
+          <option>All</option>
+          <option>NFE Framework</option>
+          <option>Sassy</option>
+          <option>Holloway Paradox</option>
+          <option>WoW Campaign</option>
+          <option>Market Testing</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div>
+        <h3>Classification Filter</h3>
         <select id="ledgerFilter" onchange="renderSavedLedger()">
           <option value="All">All</option>
           <option>Output Test Only</option>
@@ -274,13 +153,11 @@
       </div>
     </div>
 
-    <div class="top-row">
-      <button onclick="renderSavedLedger()">View Saved Ledger</button>
-      <button onclick="downloadFullLedgerTxt()">Download Full TXT</button>
-      <button onclick="downloadCompactLedgerTxt()">Download Compact TXT</button>
-      <button onclick="downloadLedgerJson()">Download JSON</button>
-      <button onclick="deleteSavedLedger()" class="danger">Delete Saved Ledger</button>
-    </div>
+    <button onclick="renderSavedLedger()">View Saved Ledger</button>
+    <button onclick="downloadFullLedgerTxt()">Download Full TXT</button>
+    <button onclick="downloadCompactLedgerTxt()">Download Compact TXT</button>
+    <button onclick="downloadLedgerJson()">Download JSON</button>
+    <button onclick="deleteSavedLedger()" class="danger">Delete Saved Ledger</button>
 
     <div id="savedLedgerView" style="margin-top:18px;"></div>
   </div>
@@ -288,26 +165,21 @@
 </div>
 
 <script>
-  const STORAGE_KEY = "nfe_sandbox_v03_ledger";
+const STORAGE_KEY = "nfe_sandbox_v04_ledger";
 
-  function buildPrompt() {
-    const input = document.getElementById("userInput").value.trim();
-    const mode = document.getElementById("mode").value;
+function buildPrompt() {
+  const input = val("userInput");
+  const mode = document.getElementById("mode").value;
 
-    if (!input) {
-      alert("Type something first.");
-      return;
-    }
+  if (!input) return alert("Type something first.");
 
-    const driftCheck = `
+  const driftCheck = `
 DRIFT CHECK
 
 Treat this request independently.
-
 Do not assume prior NFE discoveries.
 Do not assume previous tests were valid.
 Do not assume previous outputs were correct.
-
 Only use information contained in the current input and prompt.
 
 If a conclusion depends on prior NFE findings, explicitly state:
@@ -327,10 +199,10 @@ The ledger is authoritative.
 This output is not.
 `;
 
-    let prompt = "";
+  let prompt = "";
 
-    if (mode === "creative") {
-      prompt = `NFE CREATIVE STRUCTURING REQUEST
+  if (mode === "creative") {
+    prompt = `NFE CREATIVE STRUCTURING REQUEST
 
 ${driftCheck}
 
@@ -374,8 +246,8 @@ State clearly that this is generated creative material, not evidence, prediction
 
 Promotion Status:
 OUTPUT TEST ONLY — not a locked discovery.`;
-    } else {
-      prompt = `NFE ADVANCED ANALYSIS REQUEST
+  } else {
+    prompt = `NFE ADVANCED ANALYSIS REQUEST
 
 ${driftCheck}
 
@@ -425,57 +297,61 @@ Dominance / New Reality:
 Do not lock dominance unless the evidence supports it. If weak, say dominance is not locked.
 
 Anti-NFE:
-Explain what non-narrative explanation may fit better, such as structure, economics, logistics, randomness, technical limits, or incomplete data.
+Explain what non-narrative explanation may fit better.
 
 Promotion Status:
 TEST ONLY — not a locked discovery.`;
-    }
-
-    document.getElementById("promptCard").style.display = "block";
-    document.getElementById("promptOutput").innerText = prompt;
   }
 
-  function getNextLedgerId() {
-    const entries = getSavedLedger();
-    let maxNumber = 0;
+  show("promptCard");
+  setText("promptOutput", prompt);
+}
 
-    entries.forEach(entry => {
-      if (entry.ledgerId && entry.ledgerId.startsWith("NFE-")) {
-        const number = parseInt(entry.ledgerId.replace("NFE-", ""), 10);
-        if (!isNaN(number) && number > maxNumber) {
-          maxNumber = number;
-        }
-      }
-    });
+function autoCompactSummary() {
+  const ai = val("aiOutput");
+  if (!ai) return alert("Paste the AI answer first.");
 
-    const nextNumber = maxNumber + 1;
-    return "NFE-" + String(nextNumber).padStart(6, "0");
-  }
+  const classification = extractSection(ai, "Classification") || "Not detected.";
+  const fuel = extractSection(ai, "Detected Fuel") || "Not detected.";
+  const engine = extractSection(ai, "Engine Read") || "Not detected.";
+  const anti = extractSection(ai, "Anti-NFE") || "Not detected.";
+  const promo = extractSection(ai, "Promotion Status") || "Not detected.";
 
-  function buildLedger() {
-    const input = document.getElementById("userInput").value.trim();
-    const mode = document.getElementById("mode").value;
-    const prompt = document.getElementById("promptOutput").innerText.trim();
-    const aiOutput = document.getElementById("aiOutput").value.trim();
-    const status = document.getElementById("ledgerStatus").value;
-    const summary = document.getElementById("compactSummary").value.trim();
+  const summary = `Classification:
+${classification}
 
-    if (!input) {
-      alert("No original input found.");
-      return;
-    }
+Detected Fuel:
+${fuel}
 
-    if (!aiOutput) {
-      alert("Paste the AI answer first.");
-      return;
-    }
+Engine Read:
+${engine}
 
-    const ledgerId = getNextLedgerId();
-    const date = new Date().toLocaleString();
-    const modeLabel = mode === "creative" ? "Creative" : "Advanced Analysis";
-    const finalSummary = summary || "No compact summary entered.";
+Anti-NFE:
+${anti}
 
-    const compactLedger = `NFE COMPACT LEDGER ENTRY
+Promotion Status:
+${promo}`;
+
+  document.getElementById("compactSummary").value = summary;
+}
+
+function buildLedger() {
+  const input = val("userInput");
+  const aiOutput = val("aiOutput");
+  if (!input) return alert("No original input found.");
+  if (!aiOutput) return alert("Paste the AI answer first.");
+
+  const ledgerId = getNextLedgerId();
+  const date = new Date().toLocaleString();
+  const project = val("project");
+  const mode = document.getElementById("mode").value === "creative" ? "Creative" : "Advanced Analysis";
+  const classification = val("ledgerStatus");
+  const tags = val("tags");
+  const notes = val("notes");
+  const summary = val("compactSummary") || "No compact summary entered.";
+  const prompt = text("promptOutput") || "No prompt was built.";
+
+  const compact = `NFE COMPACT LEDGER ENTRY
 
 Ledger ID:
 ${ledgerId}
@@ -483,22 +359,31 @@ ${ledgerId}
 Date:
 ${date}
 
+Project:
+${project}
+
 Mode:
-${modeLabel}
+${mode}
+
+Classification:
+${classification}
+
+Tags:
+${tags || "None"}
 
 Original Input:
 ${input}
 
-Ledger Classification:
-${status}
+Compact Summary:
+${summary}
 
-Summary:
-${finalSummary}
+Testing Notes:
+${notes || "None"}
 
 Calibration Note:
 Compact record only. Full record should be checked before promotion.`;
 
-    const ledger = `NFE FULL LEDGER ENTRY
+  const full = `NFE FULL LEDGER ENTRY
 
 Ledger ID:
 ${ledgerId}
@@ -506,23 +391,32 @@ ${ledgerId}
 Date:
 ${date}
 
+Project:
+${project}
+
 Mode:
-${modeLabel}
+${mode}
+
+Classification:
+${classification}
+
+Tags:
+${tags || "None"}
 
 Original Input:
 ${input}
 
 Prompt Used:
-${prompt || "No prompt was built."}
+${prompt}
 
 AI / NFE Output:
 ${aiOutput}
 
-Ledger Classification:
-${status}
-
 Compact Summary:
-${finalSummary}
+${summary}
+
+Testing Notes:
+${notes || "None"}
 
 Calibration Note:
 This entry records an output test, not proof of predictive or analytical validity.
@@ -533,252 +427,174 @@ Review whether the result is useful because of NFE structure or merely because t
 Promotion Rule:
 Do not promote above Candidate Pattern without repeated testing, adversarial review, and ledger comparison.`;
 
-    document.getElementById("ledgerCard").style.display = "block";
-    document.getElementById("compactLedgerOutput").innerText = compactLedger;
-    document.getElementById("ledgerOutput").innerText = ledger;
-  }
+  show("ledgerCard");
+  setText("compactLedgerOutput", compact);
+  setText("ledgerOutput", full);
+}
 
-  function copyPrompt() {
-    copyTextFromElement("promptOutput", "Prompt copied.");
-  }
+function saveLedgerEntry() {
+  const fullText = text("ledgerOutput");
+  const compactText = text("compactLedgerOutput");
+  if (!fullText || !compactText) return alert("Build a ledger entry first.");
 
-  function copyLedger() {
-    copyTextFromElement("ledgerOutput", "Full ledger entry copied.");
-  }
+  const entry = {
+    id: Date.now(),
+    ledgerId: extractFromText(fullText, "Ledger ID:"),
+    dateCreated: extractFromText(fullText, "Date:"),
+    project: val("project"),
+    mode: document.getElementById("mode").value === "creative" ? "Creative" : "Advanced Analysis",
+    classification: val("ledgerStatus"),
+    originalInput: val("userInput"),
+    promptUsed: text("promptOutput") || "No prompt was built.",
+    aiOutput: val("aiOutput"),
+    compactSummary: val("compactSummary"),
+    tags: val("tags").split(",").map(t => t.trim()).filter(Boolean),
+    notes: val("notes"),
+    compactText,
+    fullText
+  };
 
-  function copyCompactLedger() {
-    copyTextFromElement("compactLedgerOutput", "Compact ledger entry copied.");
-  }
-
-  function copyTextFromElement(id, message) {
-    const text = document.getElementById(id).innerText;
-    if (!text.trim()) {
-      alert("Nothing to copy.");
-      return;
-    }
-    navigator.clipboard.writeText(text);
-    alert(message);
-  }
-
-  function getSavedLedger() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-
-    try {
-      return JSON.parse(raw);
-    } catch (error) {
-      alert("Saved ledger data is corrupted or unreadable.");
-      return [];
-    }
-  }
-
-  function setSavedLedger(entries) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries, null, 2));
-  }
-
-  function saveLedgerEntry() {
-    const input = document.getElementById("userInput").value.trim();
-    const mode = document.getElementById("mode").value;
-    const prompt = document.getElementById("promptOutput").innerText.trim();
-    const aiOutput = document.getElementById("aiOutput").value.trim();
-    const status = document.getElementById("ledgerStatus").value;
-    const summary = document.getElementById("compactSummary").value.trim();
-    const compactText = document.getElementById("compactLedgerOutput").innerText.trim();
-    const fullText = document.getElementById("ledgerOutput").innerText.trim();
-
-    if (!fullText || !compactText) {
-      alert("Build a ledger entry first.");
-      return;
-    }
-
-    const ledgerIdMatch = fullText.match(/Ledger ID:\s*\n(.+)/);
-    const ledgerId = ledgerIdMatch ? ledgerIdMatch[1].trim() : getNextLedgerId();
-
-    const entry = {
-      id: Date.now(),
-      ledgerId: ledgerId,
-      date: new Date().toLocaleString(),
-      mode: mode === "creative" ? "Creative" : "Advanced Analysis",
-      originalInput: input,
-      promptUsed: prompt || "No prompt was built.",
-      aiOutput: aiOutput,
-      classification: status,
-      summary: summary || "No compact summary entered.",
-      compactText: compactText,
-      fullText: fullText
-    };
-
-    const entries = getSavedLedger();
-    entries.unshift(entry);
-    setSavedLedger(entries);
-
-    alert("Ledger entry saved locally.");
-    renderSavedLedger();
-  }
-
-  function renderSavedLedger() {
-    const entries = getSavedLedger();
-    const view = document.getElementById("savedLedgerView");
-    const search = document.getElementById("ledgerSearch").value.toLowerCase().trim();
-    const filter = document.getElementById("ledgerFilter").value;
-
-    let filtered = entries;
-
-    if (filter !== "All") {
-      filtered = filtered.filter(entry => entry.classification === filter);
-    }
-
-    if (search) {
-      filtered = filtered.filter(entry => {
-        const searchable = `
-          ${entry.ledgerId}
-          ${entry.date}
-          ${entry.mode}
-          ${entry.originalInput}
-          ${entry.classification}
-          ${entry.summary}
-          ${entry.aiOutput}
-        `.toLowerCase();
-
-        return searchable.includes(search);
-      });
-    }
-
-    if (filtered.length === 0) {
-      view.innerHTML = "<p class='small'>No saved ledger entries match this search/filter.</p>";
-      return;
-    }
-
-    let html = `<p class="small">Showing ${filtered.length} of ${entries.length} saved entries.</p>`;
-
-    filtered.forEach((entry) => {
-      html += `
-        <div class="ledger-item">
-          <span class="badge id-badge">${escapeHtml(entry.ledgerId)}</span>
-          <span class="badge">${escapeHtml(entry.classification)}</span>
-          <strong>${escapeHtml(entry.mode)} — ${escapeHtml(entry.date)}</strong>
-          <p><strong>Input:</strong> ${escapeHtml(entry.originalInput).slice(0, 300)}${entry.originalInput.length > 300 ? "..." : ""}</p>
-          <p><strong>Summary:</strong> ${escapeHtml(entry.summary).slice(0, 300)}${entry.summary.length > 300 ? "..." : ""}</p>
-          <button onclick="copySavedCompact('${entry.id}')">Copy Compact</button>
-          <button onclick="copySavedFull('${entry.id}')">Copy Full</button>
-          <button onclick="deleteSingleEntry('${entry.id}')" class="danger">Delete Entry</button>
-        </div>
-      `;
-    });
-
-    view.innerHTML = html;
-  }
-
-  function copySavedCompact(id) {
-    const entry = getSavedLedger().find(item => String(item.id) === String(id));
-    if (!entry) {
-      alert("Entry not found.");
-      return;
-    }
-    navigator.clipboard.writeText(entry.compactText);
-    alert("Compact saved entry copied.");
-  }
-
-  function copySavedFull(id) {
-    const entry = getSavedLedger().find(item => String(item.id) === String(id));
-    if (!entry) {
-      alert("Entry not found.");
-      return;
-    }
-    navigator.clipboard.writeText(entry.fullText);
-    alert("Full saved entry copied.");
-  }
-
-  function deleteSingleEntry(id) {
-    const confirmDelete = confirm("Delete this one ledger entry?");
-    if (!confirmDelete) return;
-
-    const entries = getSavedLedger().filter(item => String(item.id) !== String(id));
-    setSavedLedger(entries);
-    renderSavedLedger();
-  }
-
-  function deleteSavedLedger() {
-    const confirmDelete = confirm("Delete the entire saved ledger from this browser/app?");
-    if (!confirmDelete) return;
-
-    localStorage.removeItem(STORAGE_KEY);
-    renderSavedLedger();
-    alert("Saved ledger deleted.");
-  }
-
-  function downloadFullLedgerTxt() {
-    const entries = getSavedLedger();
-
-    if (entries.length === 0) {
-      alert("No saved ledger entries to download.");
-      return;
-    }
-
-    const text = entries.map(entry => entry.fullText).join("\n\n==============================\n\n");
-    downloadFile("nfe-full-ledger.txt", text, "text/plain");
-  }
-
-  function downloadCompactLedgerTxt() {
-    const entries = getSavedLedger();
-
-    if (entries.length === 0) {
-      alert("No saved ledger entries to download.");
-      return;
-    }
-
-    const text = entries.map(entry => entry.compactText).join("\n\n==============================\n\n");
-    downloadFile("nfe-compact-ledger.txt", text, "text/plain");
-  }
-
-  function downloadLedgerJson() {
-    const entries = getSavedLedger();
-
-    if (entries.length === 0) {
-      alert("No saved ledger entries to download.");
-      return;
-    }
-
-    const json = JSON.stringify(entries, null, 2);
-    downloadFile("nfe-ledger.json", json, "application/json");
-  }
-
-  function downloadFile(filename, content, type) {
-    const blob = new Blob([content], { type: type });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
-
-  function clearAll() {
-    document.getElementById("userInput").value = "";
-    document.getElementById("aiOutput").value = "";
-    document.getElementById("compactSummary").value = "";
-    document.getElementById("promptOutput").innerText = "";
-    document.getElementById("compactLedgerOutput").innerText = "";
-    document.getElementById("ledgerOutput").innerText = "";
-    document.getElementById("promptCard").style.display = "none";
-    document.getElementById("ledgerCard").style.display = "none";
-  }
-
-  function escapeHtml(text) {
-    return String(text || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
+  const entries = getSavedLedger();
+  entries.unshift(entry);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries, null, 2));
+  alert("Ledger entry saved locally.");
   renderSavedLedger();
+}
+
+function renderSavedLedger() {
+  const entries = getSavedLedger();
+  const search = val("ledgerSearch").toLowerCase();
+  const projectFilter = val("projectFilter");
+  const classFilter = val("ledgerFilter");
+  const view = document.getElementById("savedLedgerView");
+
+  let filtered = entries;
+
+  if (projectFilter !== "All") filtered = filtered.filter(e => e.project === projectFilter);
+  if (classFilter !== "All") filtered = filtered.filter(e => e.classification === classFilter);
+
+  if (search) {
+    filtered = filtered.filter(e => JSON.stringify(e).toLowerCase().includes(search));
+  }
+
+  if (!filtered.length) {
+    view.innerHTML = "<p class='small'>No saved ledger entries match this search/filter.</p>";
+    return;
+  }
+
+  view.innerHTML = `<p class="small">Showing ${filtered.length} of ${entries.length} saved entries.</p>` +
+    filtered.map(e => `
+      <div class="ledger-item">
+        <span class="badge id-badge">${esc(e.ledgerId)}</span>
+        <span class="badge project-badge">${esc(e.project)}</span>
+        <span class="badge">${esc(e.classification)}</span>
+        <strong>${esc(e.mode)} — ${esc(e.dateCreated)}</strong>
+        <p><strong>Input:</strong> ${esc(e.originalInput).slice(0,250)}${e.originalInput.length > 250 ? "..." : ""}</p>
+        <p><strong>Tags:</strong> ${esc((e.tags || []).join(", ") || "None")}</p>
+        <p><strong>Summary:</strong> ${esc(e.compactSummary).slice(0,350)}${e.compactSummary.length > 350 ? "..." : ""}</p>
+        <button onclick="copySavedCompact('${e.id}')">Copy Compact</button>
+        <button onclick="copySavedFull('${e.id}')">Copy Full</button>
+        <button onclick="deleteSingleEntry('${e.id}')" class="danger">Delete Entry</button>
+      </div>
+    `).join("");
+}
+
+function getNextLedgerId() {
+  const entries = getSavedLedger();
+  let max = 0;
+  entries.forEach(e => {
+    const n = parseInt(String(e.ledgerId || "").replace("NFE-", ""), 10);
+    if (!isNaN(n) && n > max) max = n;
+  });
+  return "NFE-" + String(max + 1).padStart(6, "0");
+}
+
+function getSavedLedger() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function downloadFullLedgerTxt() {
+  const entries = getSavedLedger();
+  if (!entries.length) return alert("No saved ledger entries.");
+  downloadFile("nfe-full-ledger.txt", entries.map(e => e.fullText).join("\n\n====================\n\n"), "text/plain");
+}
+
+function downloadCompactLedgerTxt() {
+  const entries = getSavedLedger();
+  if (!entries.length) return alert("No saved ledger entries.");
+  downloadFile("nfe-compact-ledger.txt", entries.map(e => e.compactText).join("\n\n====================\n\n"), "text/plain");
+}
+
+function downloadLedgerJson() {
+  const entries = getSavedLedger();
+  if (!entries.length) return alert("No saved ledger entries.");
+  downloadFile("nfe-ledger.json", JSON.stringify(entries, null, 2), "application/json");
+}
+
+function downloadFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function copySavedCompact(id) {
+  const e = getSavedLedger().find(x => String(x.id) === String(id));
+  if (e) navigator.clipboard.writeText(e.compactText).then(() => alert("Compact copied."));
+}
+
+function copySavedFull(id) {
+  const e = getSavedLedger().find(x => String(x.id) === String(id));
+  if (e) navigator.clipboard.writeText(e.fullText).then(() => alert("Full copied."));
+}
+
+function deleteSingleEntry(id) {
+  if (!confirm("Delete this entry?")) return;
+  const entries = getSavedLedger().filter(e => String(e.id) !== String(id));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries, null, 2));
+  renderSavedLedger();
+}
+
+function deleteSavedLedger() {
+  if (!confirm("Delete entire saved ledger?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  renderSavedLedger();
+}
+
+function clearAll() {
+  ["userInput","aiOutput","compactSummary","tags","notes"].forEach(id => document.getElementById(id).value = "");
+  ["promptOutput","compactLedgerOutput","ledgerOutput"].forEach(id => setText(id, ""));
+  document.getElementById("promptCard").style.display = "none";
+  document.getElementById("ledgerCard").style.display = "none";
+}
+
+function extractSection(text, heading) {
+  const pattern = new RegExp(heading + ":\\s*([\\s\\S]*?)(?=\\n[A-Za-z /-]+:|$)", "i");
+  const match = text.match(pattern);
+  return match ? match[1].trim() : "";
+}
+
+function extractFromText(block, label) {
+  const pattern = new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*\\n(.+)");
+  const match = block.match(pattern);
+  return match ? match[1].trim() : "";
+}
+
+function val(id) { return document.getElementById(id).value.trim(); }
+function text(id) { return document.getElementById(id).innerText.trim(); }
+function setText(id, value) { document.getElementById(id).innerText = value; }
+function show(id) { document.getElementById(id).style.display = "block"; }
+function esc(v) {
+  return String(v || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+renderSavedLedger();
 </script>
 
 </body>
