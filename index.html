@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +15,12 @@
     header {
       background: #111;
       color: white;
-      padding: 24px;
+      padding: 28px 20px;
       text-align: center;
+    }
+
+    header h1 {
+      margin-bottom: 8px;
     }
 
     .container {
@@ -63,12 +66,29 @@
       background: #333;
     }
 
+    .danger {
+      background: #8b0000;
+    }
+
+    .danger:hover {
+      background: #a60000;
+    }
+
+    .secondary {
+      background: #555;
+    }
+
+    .secondary:hover {
+      background: #666;
+    }
+
     pre {
       white-space: pre-wrap;
       background: #f0f0f0;
       padding: 16px;
       border-radius: 8px;
       font-size: 15px;
+      overflow-x: auto;
     }
 
     .small {
@@ -93,13 +113,43 @@
       margin-top: 15px;
       margin-bottom: 15px;
     }
+
+    .ledger-item {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .ledger-item strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .top-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #111;
+      color: white;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
 
 <header>
   <h1>NFE Sandbox V3 Local</h1>
-  <p>Input → Mode → Copy AI Prompt → Paste Output → Ledger</p>
+  <p>Input → Mode → Copy AI Prompt → Paste Output → Ledger → Save / Export</p>
 </header>
 
 <div class="container">
@@ -115,7 +165,7 @@
     </select>
 
     <button onclick="buildPrompt()">Build Copy/Paste Prompt</button>
-    <button onclick="clearAll()">Clear</button>
+    <button onclick="clearAll()" class="secondary">Clear</button>
 
     <p class="small">
       Creative = jokes, stories, scenes, skits. Advanced Analysis = NFE analysis with guardrails.
@@ -167,11 +217,31 @@
     <pre id="ledgerOutput"></pre>
 
     <button onclick="copyLedger()">Copy Ledger Entry</button>
+    <button onclick="saveLedgerEntry()">Save Ledger Entry Locally</button>
+  </div>
+
+  <div class="card">
+    <h2>5. Saved Ledger</h2>
+
+    <p class="small">
+      Saved locally in this browser/app. This does not upload anywhere.
+    </p>
+
+    <div class="top-row">
+      <button onclick="renderSavedLedger()">View Saved Ledger</button>
+      <button onclick="downloadLedgerTxt()">Download TXT</button>
+      <button onclick="downloadLedgerJson()">Download JSON</button>
+      <button onclick="deleteSavedLedger()" class="danger">Delete Saved Ledger</button>
+    </div>
+
+    <div id="savedLedgerView" style="margin-top:18px;"></div>
   </div>
 
 </div>
 
 <script>
+  const STORAGE_KEY = "nfe_sandbox_v3_ledger";
+
   function buildPrompt() {
     const input = document.getElementById("userInput").value.trim();
     const mode = document.getElementById("mode").value;
@@ -368,13 +438,167 @@ Do not promote above Candidate Pattern without repeated testing, adversarial rev
   }
 
   function copyPrompt() {
-    navigator.clipboard.writeText(document.getElementById("promptOutput").innerText);
+    const text = document.getElementById("promptOutput").innerText;
+    if (!text.trim()) {
+      alert("No prompt to copy.");
+      return;
+    }
+    navigator.clipboard.writeText(text);
     alert("Prompt copied.");
   }
 
   function copyLedger() {
-    navigator.clipboard.writeText(document.getElementById("ledgerOutput").innerText);
+    const text = document.getElementById("ledgerOutput").innerText;
+    if (!text.trim()) {
+      alert("No ledger entry to copy.");
+      return;
+    }
+    navigator.clipboard.writeText(text);
     alert("Ledger entry copied.");
+  }
+
+  function getSavedLedger() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      alert("Saved ledger data is corrupted or unreadable.");
+      return [];
+    }
+  }
+
+  function setSavedLedger(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries, null, 2));
+  }
+
+  function saveLedgerEntry() {
+    const input = document.getElementById("userInput").value.trim();
+    const mode = document.getElementById("mode").value;
+    const prompt = document.getElementById("promptOutput").innerText.trim();
+    const aiOutput = document.getElementById("aiOutput").value.trim();
+    const status = document.getElementById("ledgerStatus").value;
+    const ledgerText = document.getElementById("ledgerOutput").innerText.trim();
+
+    if (!ledgerText) {
+      alert("Build a ledger entry first.");
+      return;
+    }
+
+    const entry = {
+      id: Date.now(),
+      date: new Date().toLocaleString(),
+      mode: mode === "creative" ? "Creative" : "Advanced Analysis",
+      originalInput: input,
+      promptUsed: prompt || "No prompt was built.",
+      aiOutput: aiOutput,
+      classification: status,
+      ledgerText: ledgerText
+    };
+
+    const entries = getSavedLedger();
+    entries.unshift(entry);
+    setSavedLedger(entries);
+
+    alert("Ledger entry saved locally.");
+    renderSavedLedger();
+  }
+
+  function renderSavedLedger() {
+    const entries = getSavedLedger();
+    const view = document.getElementById("savedLedgerView");
+
+    if (entries.length === 0) {
+      view.innerHTML = "<p class='small'>No saved ledger entries yet.</p>";
+      return;
+    }
+
+    let html = "";
+
+    entries.forEach((entry, index) => {
+      html += `
+        <div class="ledger-item">
+          <span class="badge">${entry.classification}</span>
+          <strong>${index + 1}. ${entry.mode} — ${entry.date}</strong>
+          <p><strong>Input:</strong> ${escapeHtml(entry.originalInput).slice(0, 300)}${entry.originalInput.length > 300 ? "..." : ""}</p>
+          <button onclick="copySavedEntry(${entry.id})">Copy Full Entry</button>
+          <button onclick="deleteSingleEntry(${entry.id})" class="danger">Delete Entry</button>
+        </div>
+      `;
+    });
+
+    view.innerHTML = html;
+  }
+
+  function copySavedEntry(id) {
+    const entries = getSavedLedger();
+    const entry = entries.find(item => item.id === id);
+
+    if (!entry) {
+      alert("Entry not found.");
+      return;
+    }
+
+    navigator.clipboard.writeText(entry.ledgerText);
+    alert("Saved ledger entry copied.");
+  }
+
+  function deleteSingleEntry(id) {
+    const confirmDelete = confirm("Delete this one ledger entry?");
+    if (!confirmDelete) return;
+
+    const entries = getSavedLedger().filter(item => item.id !== id);
+    setSavedLedger(entries);
+    renderSavedLedger();
+  }
+
+  function deleteSavedLedger() {
+    const confirmDelete = confirm("Delete the entire saved ledger from this browser/app?");
+    if (!confirmDelete) return;
+
+    localStorage.removeItem(STORAGE_KEY);
+    renderSavedLedger();
+    alert("Saved ledger deleted.");
+  }
+
+  function downloadLedgerTxt() {
+    const entries = getSavedLedger();
+
+    if (entries.length === 0) {
+      alert("No saved ledger entries to download.");
+      return;
+    }
+
+    const text = entries.map(entry => entry.ledgerText).join("\n\n==============================\n\n");
+    downloadFile("nfe-ledger.txt", text, "text/plain");
+  }
+
+  function downloadLedgerJson() {
+    const entries = getSavedLedger();
+
+    if (entries.length === 0) {
+      alert("No saved ledger entries to download.");
+      return;
+    }
+
+    const json = JSON.stringify(entries, null, 2);
+    downloadFile("nfe-ledger.json", json, "application/json");
+  }
+
+  function downloadFile(filename, content, type) {
+    const blob = new Blob([content], { type: type });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   function clearAll() {
@@ -385,8 +609,18 @@ Do not promote above Candidate Pattern without repeated testing, adversarial rev
     document.getElementById("promptCard").style.display = "none";
     document.getElementById("ledgerCard").style.display = "none";
   }
+
+  function escapeHtml(text) {
+    return text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  renderSavedLedger();
 </script>
 
 </body>
 </html>
-```
